@@ -23,6 +23,7 @@ import java.util.List;
 @RequestMapping(value = "/brand")
 @CrossOrigin
 public class BrandController {
+    //自动注入的其实是实现BrandService接口的BrandServiceImpl
     @Autowired
     private BrandService brandService;
 
@@ -31,7 +32,7 @@ public class BrandController {
      * @auther Maid
      */
     @GetMapping
-    public Result<List<Brand>> findAll(){
+    public Result<List<Brand>> findAll() {
         //调用Service查询所有
         List<Brand> brands = brandService.findAll();
         return new Result<List<Brand>>(true, StatusCode.OK,"查询品牌集合成功！",brands);
