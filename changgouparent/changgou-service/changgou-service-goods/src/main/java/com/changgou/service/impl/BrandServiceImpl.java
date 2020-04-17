@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * @ClassName
+ * @ClassName BrandServiceImpl
  * @Description
  * @Author Maid
  * @Date 2020/4/16 0016 19:04
@@ -19,6 +19,15 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandMapper brandMapper;
+
+    /**
+     * 根据id删除品牌
+     * @param id
+     */
+    @Override
+    public void delete(Integer id) {
+        brandMapper.deleteByPrimaryKey(id);
+    }
 
     /**
      * 更改品牌数据

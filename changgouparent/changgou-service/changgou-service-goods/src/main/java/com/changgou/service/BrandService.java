@@ -12,6 +12,13 @@ import java.util.List;
  * @Version v1.0
  */
 public interface BrandService {
+
+    /**
+     * 根据id删除品牌
+     * @param id
+     */
+    void delete(Integer id);
+
     /**
      * 根据ID修改品牌数据
      * @param brand

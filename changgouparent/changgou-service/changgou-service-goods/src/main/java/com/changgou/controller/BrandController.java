@@ -26,6 +26,17 @@ public class BrandController {
 
 
     /**
+     * 根据ID删除品牌
+     * @param id
+     * @return
+     */
+    @DeleteMapping(value = "/{id}")
+    public Result delete(@PathVariable("id")Integer id){
+        brandService.delete(id);
+        return new Result(true,StatusCode.OK,"删除品牌成功!");
+    }
+
+    /**
      * 品牌修改实现
      * @param id
      * @param brand
