@@ -2,6 +2,8 @@ package com.changgou.controller;
 
 import com.changgou.goods.pojo.Brand;
 import com.changgou.service.BrandService;
+import com.github.pagehelper.PageInfo;
+import entity.Page;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,18 @@ public class BrandController {
     //自动注入的其实是实现BrandService接口的BrandServiceImpl
     @Autowired
     private BrandService brandService;
+
+    /**
+     * 分页查询实现
+     * @param page 查询页数
+     * @param size 每页条目数
+     */
+    @GetMapping(value = "/search/{page}/{size}")
+    public Result<PageInfo<Brand>> findPage(@PathVariable("page")Integer page,
+                                    @PathVariable("size")Integer size){
+        PageInfo<Brand> pageInfo = brandService.findPage(page, size);
+        return new Result<PageInfo<Brand>>(true,StatusCode.OK,"分页查询成功!",pageInfo);
+    }
 
     /**
      * 条件搜索查询品牌

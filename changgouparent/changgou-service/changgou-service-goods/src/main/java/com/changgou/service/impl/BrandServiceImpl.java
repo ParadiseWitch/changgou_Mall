@@ -3,6 +3,8 @@ package com.changgou.service.impl;
 import com.changgou.dao.BrandMapper;
 import com.changgou.goods.pojo.Brand;
 import com.changgou.service.BrandService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,20 @@ public class BrandServiceImpl implements BrandService {
 
     @Autowired
     private BrandMapper brandMapper;
+
+    /**
+     * 分页查询
+     * @param page
+     * @param size
+     */
+    @Override
+    public PageInfo<Brand> findPage(Integer page, Integer size) {
+        //使用PageHelper
+        PageHelper.startPage(page,size);
+        //后面要紧跟查询集合
+        List<Brand> brands = brandMapper.selectAll();
+        return new PageInfo<Brand>(brands);
+    }
 
     /**
      * 根据条件查询品牌
