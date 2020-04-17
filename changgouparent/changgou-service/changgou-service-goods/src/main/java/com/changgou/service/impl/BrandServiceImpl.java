@@ -20,9 +20,19 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandMapper brandMapper;
 
+    /**
+     * @Description findById 通过id查询
+     * @param [id]
+     * @return com.changgou.goods.pojo.Brand
+     */
+    @Override
+    public Brand findById(Integer id) {
+        return brandMapper.selectByPrimaryKey(id);
+    }
+
     /***
      * 查询所有
-     * @return
+     * @return List<Brand>
      */
     @Override
     public List<Brand> findAll() {
