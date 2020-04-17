@@ -12,12 +12,18 @@ import java.util.List;
  * @Version v1.0
  */
 public interface BrandService {
+    /**
+     * 根据ID修改品牌数据
+     * @param brand
+     */
+    void update(Brand brand);
 
     /**
      * 增加品牌
      * @param brand
      */
     void add(Brand brand);
+
     /**
      * 根据ID查询
      * @param id

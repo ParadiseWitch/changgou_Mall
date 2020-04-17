@@ -21,6 +21,15 @@ public class BrandServiceImpl implements BrandService {
     private BrandMapper brandMapper;
 
     /**
+     * 更改品牌数据
+     * @param brand
+     */
+    @Override
+    public void update(Brand brand) {
+        brandMapper.updateByPrimaryKeySelective(brand);
+    }
+
+    /**
      * 增加品牌
      * @param brand
      */

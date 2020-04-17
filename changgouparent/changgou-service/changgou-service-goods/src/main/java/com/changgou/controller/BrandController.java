@@ -24,6 +24,21 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+
+    /**
+     * 品牌修改实现
+     * @param id
+     * @param brand
+     * @return entity.Result
+     */
+    @PutMapping(value = "/{id}")
+    public Result update(@PathVariable("id") Integer id, @RequestBody Brand brand) {
+        brand.setId(id);
+        brandService.update(brand);
+        return new Result(true, StatusCode.OK, "更新品牌成功!");
+    }
+
+
     /**
      * 增加品牌
      * @param brand
