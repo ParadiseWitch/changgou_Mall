@@ -24,6 +24,16 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+    /**
+     * 条件搜索查询品牌
+     * @param brand
+     * @return
+     */
+    @PostMapping(value = "/search")
+    public Result<List<Brand>> findList(@RequestBody Brand brand){
+        List<Brand> brands = brandService.findList(brand);
+        return new Result<List<Brand>>(true,StatusCode.OK,"条件搜索查询成功",brands);
+    }
 
     /**
      * 根据ID删除品牌

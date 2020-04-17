@@ -14,6 +14,12 @@ import java.util.List;
 public interface BrandService {
 
     /**
+     * 根据品牌信息多条件查询
+     * @return
+     */
+    List<Brand> findList(Brand brand);
+
+    /**
      * 根据id删除品牌
      * @param id
      */
