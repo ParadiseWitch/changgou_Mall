@@ -21,6 +21,24 @@ public class BrandServiceImpl implements BrandService {
     private BrandMapper brandMapper;
 
     /**
+     * 增加品牌
+     * @param brand
+     */
+    @Override
+    public void add(Brand brand) {
+        //NOTE:方法中凡是带有Selective的，执行（拼切sql）时会忽略值为空值的字段，insert方法不会忽略空值
+        /**
+         * insertSelective
+         *      brand:name有值
+         *           letter有值,其余字段为空
+         * Mapper.insertSelective(brand)->SQL语句: insert into tb_brand(name, letter) values(?,?)
+         * insert 不忽略空值
+         * Mapper.insert(brand)->SQL语句: insert into tb_brand(id, name, image, letter, seq) values(?,?,?,?,?)
+         */
+        brandMapper.insertSelective(brand);
+    }
+
+    /**
      * @Description findById 通过id查询
      * @param [id]
      * @return com.changgou.goods.pojo.Brand

@@ -25,6 +25,16 @@ public class BrandController {
     private BrandService brandService;
 
     /**
+     * 增加品牌
+     * @param brand
+     */
+    @PostMapping
+    public Result add(@RequestBody Brand brand){
+        brandService.add(brand);
+        return new Result(true, StatusCode.OK,"增加品牌成功！");
+    }
+
+    /**
      * @Description findById
      * @return com.changgou.goods.pojo.Brand
      * @auther Maid
@@ -33,7 +43,7 @@ public class BrandController {
     @GetMapping(value = "/{id}")
     public Result<Brand> findById(@PathVariable(value = "id")Integer id){
         Brand brand = brandService.findById(id);
-        return new Result<Brand>(true, StatusCode.OK,"根据ID查询成功！",brand);
+        return new Result<Brand>(true, StatusCode.OK,"根据ID查询品牌成功！",brand);
     }
     /**
      * @return void
