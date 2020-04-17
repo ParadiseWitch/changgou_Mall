@@ -12,6 +12,13 @@ import java.util.List;
  * @Version v1.0
  */
 public interface BrandService {
+    /**
+     * 根据ID查询
+     * @param id
+     * @return Brand
+     */
+    Brand findById(Integer id);
+
     /***
      * 查询所有
      * @return List<Brand>

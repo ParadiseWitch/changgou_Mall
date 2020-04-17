@@ -5,10 +5,7 @@ import com.changgou.service.BrandService;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +24,17 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+    /**
+     * @Description findById
+     * @return com.changgou.goods.pojo.Brand
+     * @auther Maid
+     * @date 2020/4/17 0017
+     */
+    @GetMapping(value = "/{id}")
+    public Result<Brand> findById(@PathVariable(value = "id")Integer id){
+        Brand brand = brandService.findById(id);
+        return new Result<Brand>(true, StatusCode.OK,"根据ID查询成功！",brand);
+    }
     /**
      * @return void
      * @auther Maid
