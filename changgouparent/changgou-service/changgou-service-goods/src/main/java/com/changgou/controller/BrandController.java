@@ -26,6 +26,21 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+
+    /**
+     * 分页条件查询实现
+     * @param brand
+     * @param page 查询页数
+     * @param size 每页条目数
+     */
+    @PostMapping(value = "/search/{page}/{size}")
+    public Result<PageInfo<Brand>> findPage(@RequestBody Brand brand,
+                                            @PathVariable("page")Integer page,
+                                            @PathVariable("size")Integer size){
+        PageInfo<Brand> pageInfo = brandService.findPage(brand,page, size);
+        return new Result<PageInfo<Brand>>(true,StatusCode.OK,"分页条件查询成功!",pageInfo);
+    }
+
     /**
      * 分页查询实现
      * @param page 查询页数

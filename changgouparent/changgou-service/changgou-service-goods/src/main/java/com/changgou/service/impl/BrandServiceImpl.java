@@ -28,6 +28,23 @@ public class BrandServiceImpl implements BrandService {
     private BrandMapper brandMapper;
 
     /**
+     * 分页条件查询
+     * @param brand
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageInfo<Brand> findPage(Brand brand, Integer page, Integer size) {
+        //分页
+        PageHelper.startPage(page,size);
+        //条件
+        Example example = createExample(brand);
+        List<Brand> brands = brandMapper.selectByExample(example);
+        return new PageInfo<Brand>(brands);
+    }
+
+    /**
      * 分页查询
      * @param page
      * @param size
