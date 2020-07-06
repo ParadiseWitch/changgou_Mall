@@ -30,3 +30,7 @@ id4[Mapper] --继承--> id
 ```
 
 `dao` -> `service` -> `controller`
+
+---
+## 工程结构
+![工程结构](https://gitee.com/Maiiiiiid/picture_bed/raw/master/手机上传/-71264b5e7f75c1ed.jpg)

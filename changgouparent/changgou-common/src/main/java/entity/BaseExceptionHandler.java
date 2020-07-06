@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @ClassName com.changgou.controller.BaseExceptionHandler
+ * @ClassName entity.BaseExceptionHandler
  * @Description
  * @Author Maid
  * @Date 2020/7/4 0004 22:49
