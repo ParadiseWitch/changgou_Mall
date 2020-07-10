@@ -83,22 +83,42 @@ public class FastDFSUtil {
         return new ByteArrayInputStream(buffer);
     }
 
+
+    /**
+     * 删除文件
+     * @param groupName             group1
+     * @param remoteFileName        M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg
+     * @throws Exception
+     */
+    public static void deleteFile(String groupName, String remoteFileName) throws Exception {
+
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = trackerClient.getConnection();
+        StorageClient storageClient = new StorageClient(trackerServer, null);
+
+        storageClient.delete_file(groupName,remoteFileName);
+    }
+
+    /***
+     * 获取Storage组
+     * @param groupName
+     * @return
+     * @throws IOException
+     */
+    public static StorageServer getStoreStorages(String groupName)
+            throws IOException {
+        //创建TrackerClient
+        TrackerClient trackerClient = new TrackerClient();
+        //获取TrackerServer
+        TrackerServer trackerServer = trackerClient.getConnection();
+        //获取Storage组
+        return trackerClient.getStoreStorage(trackerServer, groupName);
+    }
+
     public static void main(String[] args) throws Exception {
-        /*
-        FileInfo fileInfo = getFile("group1", "M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg");
-        System.out.println(fileInfo.getCreateTimestamp());
-        System.out.println(fileInfo.getSourceIpAddr());
-        */
-        InputStream is = downloadFile("group1", "M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg");
-        FileOutputStream os = new FileOutputStream("D:/1.jpg");
-        byte[] buffer = new byte[1024];
 
-        while (is.read(buffer)!=-1){
-            os.write(buffer);
-        }
-        os.flush();
-        os.close();
-        is.close();
-
+        StorageServer storageServer = getStoreStorages("group1");
+        System.out.println(storageServer.getStorePathIndex());
+        System.out.println(storageServer.getInetSocketAddress().getHostString());
     }
 }

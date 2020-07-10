@@ -87,3 +87,9 @@ store_path0=/data/fast_data
 ```
 > 即：`M00 -> /data/fast_data`
 
+文件删除后 禁止浏览器缓存
+```shell script
+# nginx 禁止缓存
+add_header Cache-Control no-store;
+```
+
