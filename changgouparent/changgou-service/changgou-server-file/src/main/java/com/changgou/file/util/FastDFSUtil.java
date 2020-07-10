@@ -6,7 +6,10 @@ import org.csource.common.NameValuePair;
 import org.csource.fastdfs.*;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @ClassName com.changgou.file.util.FastDFSUtil
@@ -46,12 +49,11 @@ public class FastDFSUtil {
 
 
     /**
-     *
+     * 获取文件信息
      * @param groupName             group1
      * @param remoteFileName        M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg
      * @return FileInfo
-     * @throws IOException
-     * @throws MyException
+     * @throws Exception
      */
     public static FileInfo getFile(String groupName, String remoteFileName) throws Exception {
 
@@ -62,9 +64,41 @@ public class FastDFSUtil {
         return storageClient.get_file_info(groupName,remoteFileName);
     }
 
+
+    /**
+     * 下载文件
+     * @param groupName             group1
+     * @param remoteFileName        M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg
+     * @return
+     * @throws Exception
+     */
+    public static InputStream downloadFile(String groupName, String remoteFileName) throws Exception {
+
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = trackerClient.getConnection();
+        StorageClient storageClient = new StorageClient(trackerServer, null);
+
+        byte[] buffer = storageClient.download_file(groupName,remoteFileName);
+
+        return new ByteArrayInputStream(buffer);
+    }
+
     public static void main(String[] args) throws Exception {
+        /*
         FileInfo fileInfo = getFile("group1", "M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg");
         System.out.println(fileInfo.getCreateTimestamp());
         System.out.println(fileInfo.getSourceIpAddr());
+        */
+        InputStream is = downloadFile("group1", "M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg");
+        FileOutputStream os = new FileOutputStream("D:/1.jpg");
+        byte[] buffer = new byte[1024];
+
+        while (is.read(buffer)!=-1){
+            os.write(buffer);
+        }
+        os.flush();
+        os.close();
+        is.close();
+
     }
 }
