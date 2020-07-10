@@ -3,10 +3,7 @@ package com.changgou.file.util;
 import com.changgou.file.pojo.FastDFSFile;
 import org.csource.common.MyException;
 import org.csource.common.NameValuePair;
-import org.csource.fastdfs.ClientGlobal;
-import org.csource.fastdfs.StorageClient;
-import org.csource.fastdfs.TrackerClient;
-import org.csource.fastdfs.TrackerServer;
+import org.csource.fastdfs.*;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class FastDFSUtil {
         }
     }
 
-    public static String[] upload(FastDFSFile file) throws IOException, MyException {
+    public static String[] upload(FastDFSFile file) throws Exception {
         //meta:
         NameValuePair[] meta_list = new NameValuePair[1];
         meta_list[0] = new NameValuePair("author",file.getAuthor());
@@ -45,5 +42,29 @@ public class FastDFSUtil {
         String[] uploads = storageClient.upload_file(file.getContent(), file.getExt(), meta_list);
         return uploads;
 
+    }
+
+
+    /**
+     *
+     * @param groupName             group1
+     * @param remoteFileName        M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg
+     * @return FileInfo
+     * @throws IOException
+     * @throws MyException
+     */
+    public static FileInfo getFile(String groupName, String remoteFileName) throws Exception {
+
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = trackerClient.getConnection();
+        StorageClient storageClient = new StorageClient(trackerServer, null);
+
+        return storageClient.get_file_info(groupName,remoteFileName);
+    }
+
+    public static void main(String[] args) throws Exception {
+        FileInfo fileInfo = getFile("group1", "M00/00/00/wKgBB18JFLqAUo2dAAd8Z2CzvPY160.jpg");
+        System.out.println(fileInfo.getCreateTimestamp());
+        System.out.println(fileInfo.getSourceIpAddr());
     }
 }

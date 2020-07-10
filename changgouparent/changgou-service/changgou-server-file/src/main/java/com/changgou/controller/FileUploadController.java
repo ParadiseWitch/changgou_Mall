@@ -25,7 +25,7 @@ import java.io.IOException;
 public class FileUploadController {
 
     @PostMapping
-    public Result upload(@RequestParam(value = "file")MultipartFile file) throws IOException, MyException {
+    public Result upload(@RequestParam(value = "file")MultipartFile file) throws Exception {
         FastDFSFile fastDFSFile = new FastDFSFile(
             file.getOriginalFilename(),
             file.getBytes(),
@@ -34,7 +34,7 @@ public class FileUploadController {
 
         //[文件上传存储的Storage的名字group1，文件存储到Storage的文件名]
         String[] uploads = FastDFSUtil.upload(fastDFSFile);
-        //拼切Url
+        //拼切Url   TODO:ip是否可以程序化
         String url = "http://192.168.1.7:8080/" + uploads[0] + "/" + uploads[1];
         return new Result(true, StatusCode.OK,"上传成功!",url);
     }

@@ -76,4 +76,14 @@ location /group1/M00 {
 [root@192 ~]# docker update --restart=always tracker
 [root@192 ~]# docker update --restart=always storage
 ```
+----
+文件上传的真实路径：
+`vi /etc/fdfs/storage` ->
+```shell script
+# store_path#, based 0, if store_path0 not exists, it's value is base_path
+# the paths must be exist
+store_path0=/data/fast_data
+#store_path1=/home/yuqing/fastdfs2
+```
+> 即：`M00 -> /data/fast_data`
 
