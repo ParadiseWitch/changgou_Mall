@@ -31,7 +31,7 @@ public class FastDFSUtil {
         }
     }
 
-    public static void upload(FastDFSFile file) throws IOException, MyException {
+    public static String[] upload(FastDFSFile file) throws IOException, MyException {
         //meta:
         NameValuePair[] meta_list = new NameValuePair[1];
         meta_list[0] = new NameValuePair("author",file.getAuthor());
@@ -41,7 +41,9 @@ public class FastDFSUtil {
         TrackerServer trackerServer = trackerClient.getConnection();
         StorageClient storageClient = new StorageClient(trackerServer, null);
 
-        storageClient.upload_file(file.getContent(),file.getExt(),meta_list);
+        //[文件上传存储的Storage的名字group1，文件存储到Storage的文件名]
+        String[] uploads = storageClient.upload_file(file.getContent(), file.getExt(), meta_list);
+        return uploads;
 
     }
 }

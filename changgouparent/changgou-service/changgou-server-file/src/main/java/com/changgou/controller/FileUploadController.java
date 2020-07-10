@@ -31,8 +31,11 @@ public class FileUploadController {
             file.getBytes(),
             StringUtils.getFilenameExtension(file.getOriginalFilename())
         );
-        FastDFSUtil.upload(fastDFSFile);
 
-        return new Result(true, StatusCode.OK,"上传成功!");
+        //[文件上传存储的Storage的名字group1，文件存储到Storage的文件名]
+        String[] uploads = FastDFSUtil.upload(fastDFSFile);
+        //拼切Url
+        String url = "http://192.168.1.7:8080/" + uploads[0] + "/" + uploads[1];
+        return new Result(true, StatusCode.OK,"上传成功!",url);
     }
 }
