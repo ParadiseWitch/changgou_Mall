@@ -115,10 +115,26 @@ public class FastDFSUtil {
         return trackerClient.getStoreStorage(trackerServer, groupName);
     }
 
-    public static void main(String[] args) throws Exception {
 
-        StorageServer storageServer = getStoreStorages("group1");
-        System.out.println(storageServer.getStorePathIndex());
-        System.out.println(storageServer.getInetSocketAddress().getHostString());
+    /**
+     * 获取Storage的ip，端口等信息
+     * @param groupName
+     * @param remoteFileName
+     * @return
+     * @throws IOException
+     */
+    public static ServerInfo[] getFetchStorages(String groupName,String remoteFileName)
+            throws IOException {
+        //创建TrackerClient
+        TrackerClient trackerClient = new TrackerClient();
+        //获取TrackerServer
+        TrackerServer trackerServer = trackerClient.getConnection();
+        //获取Storage组
+        return trackerClient.getFetchStorages(trackerServer, groupName, remoteFileName);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println(getFetchStorages("group1", "M00/00/00/wKgBB18JMwSAZ5zGAAd8Z2CzvPY203.jpg")[0].getIpAddr());
+        System.out.println(getFetchStorages("group1", "M00/00/00/wKgBB18JMwSAZ5zGAAd8Z2CzvPY203.jpg")[0].getPort());
     }
 }
