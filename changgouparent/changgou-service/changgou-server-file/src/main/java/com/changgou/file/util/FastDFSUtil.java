@@ -37,12 +37,8 @@ public class FastDFSUtil {
         meta_list[0] = new NameValuePair("author",file.getAuthor());
 
 
-        TrackerClient trackerClient = new TrackerClient();
-        TrackerServer trackerServer = trackerClient.getConnection();
-        StorageClient storageClient = new StorageClient(trackerServer, null);
-
         //[文件上传存储的Storage的名字group1，文件存储到Storage的文件名]
-        String[] uploads = storageClient.upload_file(file.getContent(), file.getExt(), meta_list);
+        String[] uploads = getStorageClient().upload_file(file.getContent(), file.getExt(), meta_list);
         return uploads;
 
     }
@@ -56,12 +52,7 @@ public class FastDFSUtil {
      * @throws Exception
      */
     public static FileInfo getFile(String groupName, String remoteFileName) throws Exception {
-
-        TrackerClient trackerClient = new TrackerClient();
-        TrackerServer trackerServer = trackerClient.getConnection();
-        StorageClient storageClient = new StorageClient(trackerServer, null);
-
-        return storageClient.get_file_info(groupName,remoteFileName);
+        return getStorageClient().get_file_info(groupName,remoteFileName);
     }
 
 
@@ -73,13 +64,7 @@ public class FastDFSUtil {
      * @throws Exception
      */
     public static InputStream downloadFile(String groupName, String remoteFileName) throws Exception {
-
-        TrackerClient trackerClient = new TrackerClient();
-        TrackerServer trackerServer = trackerClient.getConnection();
-        StorageClient storageClient = new StorageClient(trackerServer, null);
-
-        byte[] buffer = storageClient.download_file(groupName,remoteFileName);
-
+        byte[] buffer = getStorageClient().download_file(groupName,remoteFileName);
         return new ByteArrayInputStream(buffer);
     }
 
@@ -91,12 +76,7 @@ public class FastDFSUtil {
      * @throws Exception
      */
     public static void deleteFile(String groupName, String remoteFileName) throws Exception {
-
-        TrackerClient trackerClient = new TrackerClient();
-        TrackerServer trackerServer = trackerClient.getConnection();
-        StorageClient storageClient = new StorageClient(trackerServer, null);
-
-        storageClient.delete_file(groupName,remoteFileName);
+        getStorageClient().delete_file(groupName,remoteFileName);
     }
 
     /***
@@ -106,13 +86,11 @@ public class FastDFSUtil {
      * @throws IOException
      */
     public static StorageServer getStoreStorages(String groupName)
-            throws IOException {
+            throws Exception {
         //创建TrackerClient
         TrackerClient trackerClient = new TrackerClient();
-        //获取TrackerServer
-        TrackerServer trackerServer = trackerClient.getConnection();
-        //获取Storage组
-        return trackerClient.getStoreStorage(trackerServer, groupName);
+
+        return trackerClient.getStoreStorage(getTackerServer(), groupName);
     }
 
 
@@ -124,17 +102,45 @@ public class FastDFSUtil {
      * @throws IOException
      */
     public static ServerInfo[] getFetchStorages(String groupName,String remoteFileName)
-            throws IOException {
+            throws Exception {
+        //创建TrackerClient
+        TrackerClient trackerClient = new TrackerClient();
+
+        return trackerClient.getFetchStorages(getTackerServer(), groupName, remoteFileName);
+    }
+
+    /**
+     * 获取Tracker服务地址
+     * @return url
+     * @throws Exception
+     */
+    public static String getTrackerInfo() throws Exception {
+
+
+        int port = ClientGlobal.getG_tracker_http_port();
+        String ip = getTackerServer().getInetSocketAddress().getHostString();
+        return "http://" + ip + ":" + port;
+
+    }
+
+
+    private static TrackerServer getTackerServer() throws Exception {
         //创建TrackerClient
         TrackerClient trackerClient = new TrackerClient();
         //获取TrackerServer
-        TrackerServer trackerServer = trackerClient.getConnection();
-        //获取Storage组
-        return trackerClient.getFetchStorages(trackerServer, groupName, remoteFileName);
+        return trackerClient.getConnection();
     }
 
+    private static StorageClient getStorageClient() throws Exception {
+        return new StorageClient(getTackerServer(),null);
+    }
+
+
+
+
+
+
     public static void main(String[] args) throws Exception {
-        System.out.println(getFetchStorages("group1", "M00/00/00/wKgBB18JMwSAZ5zGAAd8Z2CzvPY203.jpg")[0].getIpAddr());
-        System.out.println(getFetchStorages("group1", "M00/00/00/wKgBB18JMwSAZ5zGAAd8Z2CzvPY203.jpg")[0].getPort());
+
     }
 }
