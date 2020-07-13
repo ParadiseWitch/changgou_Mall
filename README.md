@@ -61,6 +61,8 @@ docker run -d --name storage --net=host -e TRACKER_IP=<your tracker server addre
 进入`storage`容器 修改nginx配置（`/data/nginx/conf/nginx.conf`）：
 ```
 location /group1/M00 {
+    # 禁止缓存，后面有讲到
+    add_header Cache-Control no-store; 
     proxy_next_upstream http_502 http_504 error timeout invalid_header;
     proxy_cache http-cache;
     proxy_cache_valid  200 304 12h;

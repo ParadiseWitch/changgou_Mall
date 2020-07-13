@@ -16,7 +16,7 @@ import javax.swing.*;
  */
 @SpringBootApplication
 @EnableEurekaClient  //开启eureka客户端
-@MapperScan(basePackages = "com.changgou.dao")
+@MapperScan(basePackages = "com.changgou.goods.dao")
 /*
  * 开启通用Mapper的包扫描
  * NOTE:有关通用Mapper的包都是`tk.mybatis`下的

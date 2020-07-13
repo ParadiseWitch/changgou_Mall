@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="changgou-service-goods-api" />
         <module name="changgou-common-db" />
+        <module name="code-template" />
         <module name="changgou-common" />
         <module name="changgou-service-goods" />
         <module name="changgouserverfile" />
@@ -26,6 +27,7 @@
       <module name="changgou-web" target="1.8" />
       <module name="changgouparent" target="1.8" />
       <module name="changgouserverfile" target="1.8" />
+      <module name="code-template" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
