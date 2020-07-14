@@ -12,6 +12,13 @@ import java.util.List;
  *****/
 public interface CategoryService {
 
+    /**
+     * 根据父分类id获取子分类节点集合
+     * @param pid
+     * @return
+     */
+    List<Category> findByParentId(Integer pid);
+
     /***
      * Category多条件分页查询
      * @param category

@@ -1,8 +1,10 @@
 package com.changgou;
 
+import entity.IdWorker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
 import tk.mybatis.spring.annotation.MapperScan;
 
 import javax.swing.*;
@@ -22,6 +24,16 @@ import javax.swing.*;
  * NOTE:有关通用Mapper的包都是`tk.mybatis`下的
  */
 public class GoodApplication {
+
+    /**
+     * IdWorker
+     * @return
+     */
+    @Bean
+    public IdWorker idWorker(){
+        return new IdWorker(0,0);
+    }
+
     public static void main(String[] args) {
     /**
      * @Description main

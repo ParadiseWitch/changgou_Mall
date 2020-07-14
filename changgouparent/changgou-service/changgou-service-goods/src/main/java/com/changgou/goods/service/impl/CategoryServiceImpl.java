@@ -25,6 +25,20 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     /**
+     * 一级分类pid = 0
+     * @param pid
+     * @return
+     */
+    @Override
+    public List<Category> findByParentId(Integer pid) {
+        //根据父id查询， SELECT * FROM tb_category WHERE id = #{pid}
+        //封装一个JavaBean，如果改JavaBean指定属性不为空，则会将指定属性作为查询条件
+        Category category = new Category();
+        category.setParentId(pid);
+        return categoryMapper.select(category);
+    }
+
+    /**
      * Category条件+分页查询
      * @param category 查询条件
      * @param page 页码
