@@ -3,9 +3,11 @@ package com.changgou.goods.controller;
 import com.changgou.goods.pojo.Spec;
 import com.changgou.goods.service.SpecService;
 import com.github.pagehelper.PageInfo;
+import com.sun.webkit.InspectorClient;
 import entity.Result;
 import entity.StatusCode;
 import io.swagger.annotations.*;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,18 @@ public class SpecController {
 
     @Autowired
     private SpecService specService;
+
+
+    /**
+     * 根据分类ID查询规格列表
+     * @param cid
+     * @return
+     */
+    @GetMapping(value = "/category/{id}")
+    public Result<List<Spec>> findByCategoryId(@PathVariable(value = "id")Integer cid){
+        List<Spec> specs = specService.findByCategoryId(cid);
+        return new Result<List<Spec>>(true,StatusCode.OK,"findByCategoryId查询成功!",specs);
+    }
 
     /***
      * Spec分页条件搜索实现

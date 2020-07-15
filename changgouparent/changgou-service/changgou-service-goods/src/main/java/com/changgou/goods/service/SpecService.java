@@ -12,6 +12,13 @@ import java.util.List;
  *****/
 public interface SpecService {
 
+    /**
+     * 根据分类ID查询规格列表
+     * @param cid
+     * @return
+     */
+    List<Spec> findByCategoryId(Integer cid);
+
     /***
      * Spec多条件分页查询
      * @param spec
