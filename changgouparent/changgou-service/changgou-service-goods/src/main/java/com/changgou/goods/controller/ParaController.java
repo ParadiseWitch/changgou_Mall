@@ -2,6 +2,7 @@ package com.changgou.goods.controller;
 
 import com.changgou.goods.pojo.Para;
 import com.changgou.goods.service.ParaService;
+import com.changgou.goods.service.impl.ParaServiceImpl;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
@@ -24,6 +25,17 @@ public class ParaController {
 
     @Autowired
     private ParaService paraService;
+
+    /**
+     * 根据分类ID查询参数列表
+     * @param cid
+     * @return
+     */
+    @GetMapping(value = "/category/{id}")
+    public Result<List<Para>> findByCategoryId(@PathVariable(value = "id") Integer cid){
+        List<Para> paras = paraService.findByCategoryId(cid);
+        return new Result<List<Para>>(true,StatusCode.OK,"findByCategoryId查询成功!",paras);
+    }
 
     /***
      * Para分页条件搜索实现
