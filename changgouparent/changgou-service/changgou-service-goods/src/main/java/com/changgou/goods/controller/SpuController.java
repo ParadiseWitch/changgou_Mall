@@ -26,6 +26,12 @@ public class SpuController {
     @Autowired
     private SpuService spuService;
 
+    @GetMapping("/goods/{id}")
+    public Result<Goods> findGoodsById(@PathVariable(value = "id")Long id){
+        Goods goods = spuService.findGoodsById(id);
+        return new Result<Goods>(true,StatusCode.OK,"findGoodsById成功!",goods);
+    }
+
 
     /***
      * 添加Goods

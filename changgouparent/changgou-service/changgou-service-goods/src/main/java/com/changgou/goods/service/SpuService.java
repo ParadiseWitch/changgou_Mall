@@ -14,6 +14,13 @@ import java.util.List;
 public interface SpuService {
 
     /**
+     * 根据id查询goods
+     * @param id
+     * @return
+     */
+    Goods findGoodsById(Long id);
+
+    /**
      * 保存商品
      * @param goods
      */
