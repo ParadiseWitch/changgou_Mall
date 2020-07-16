@@ -23,8 +23,16 @@ import java.util.List;
 @CrossOrigin
 public class SpuController {
 
+
+
     @Autowired
     private SpuService spuService;
+
+    @GetMapping("/audit/{id}")
+    public Result audit(@PathVariable(value = "id")Long id){
+        spuService.audit(id);
+        return new Result(true,StatusCode.OK,"audit审核成功");
+    }
 
     @GetMapping("/goods/{id}")
     public Result<Goods> findGoodsById(@PathVariable(value = "id")Long id){
