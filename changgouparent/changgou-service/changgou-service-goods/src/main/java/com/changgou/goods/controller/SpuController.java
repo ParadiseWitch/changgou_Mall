@@ -28,7 +28,30 @@ public class SpuController {
     @Autowired
     private SpuService spuService;
 
-    @GetMapping("/audit/{id}")
+
+    /**
+     * 商品上架
+     * @param id
+     * @return
+     */
+    @PutMapping("/put/{id}")
+    public Result put(@PathVariable Long id){
+        spuService.put(id);
+        return new Result(true,StatusCode.OK,"上架成功");
+    }
+
+    /**
+     * 下架
+     * @param id
+     * @return
+     */
+    @PutMapping("/pull/{id}")
+    public Result pull(@PathVariable Long id){
+        spuService.pull(id);
+        return new Result(true,StatusCode.OK,"下架成功");
+    }
+
+    @PutMapping("/audit/{id}")
     public Result audit(@PathVariable(value = "id")Long id){
         spuService.audit(id);
         return new Result(true,StatusCode.OK,"audit审核成功");
