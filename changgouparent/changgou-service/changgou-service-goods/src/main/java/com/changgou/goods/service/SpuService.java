@@ -13,6 +13,13 @@ import java.util.List;
  *****/
 public interface SpuService {
 
+    /**
+     * 商品批量上架
+     * @param ids
+     * @return
+     */
+    int putMany(Long[] ids);
+
     /***
      * 商品上架
      * @param spuId

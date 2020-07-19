@@ -5,7 +5,7 @@ spring:
         name: goods
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+        url: jdbc:mysql://192.168.0.101/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
         username: root
         password: 123456
 eureka:
@@ -25,3 +25,7 @@ feign:
 #        map-underscore-to-camel-case: true
 #    mapper-locations: classpath:mapper/*Mapper.xml
 #    type-aliases-package: com.changgou.goods.pojo
+
+logging:
+    level:
+        com.changgou.goods.dao.*: debug    #这是你的mapper包路径，配置用与显示sql语句
