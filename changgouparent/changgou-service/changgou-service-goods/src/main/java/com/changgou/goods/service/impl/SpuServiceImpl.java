@@ -45,6 +45,26 @@ public class SpuServiceImpl implements SpuService {
     protected SkuMapper skuMapper;
 
 
+    /**
+     * 商品批量下架
+     * @param ids
+     */
+    @Override
+    public int pullMany(Long[] ids) {
+        //批量修改
+        Example example=new Example(Spu.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("id", Arrays.asList(ids));//id
+        //上架商品才能下架
+        criteria.andEqualTo("isMarketable","1");
+        //非删除的
+        criteria.andEqualTo("isDelete","0");
+
+        Spu spu=new Spu();
+        spu.setIsMarketable("0");//下架
+        return spuMapper.updateByExampleSelective(spu, example);
+    }
+
     /***
      * 批量上架
      * @param ids:需要上架的商品ID集合
@@ -52,8 +72,6 @@ public class SpuServiceImpl implements SpuService {
      */
     @Override
     public int putMany(Long[] ids) {
-        System.out.println(Arrays.asList(ids) );
-
         //批量修改
         Example example=new Example(Spu.class);
         Example.Criteria criteria = example.createCriteria();

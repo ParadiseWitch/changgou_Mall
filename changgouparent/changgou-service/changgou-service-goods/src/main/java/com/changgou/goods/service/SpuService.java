@@ -14,6 +14,12 @@ import java.util.List;
 public interface SpuService {
 
     /**
+     * 商品批量下架
+     * @param ids
+     */
+    int pullMany(Long[] ids);
+
+    /**
      * 商品批量上架
      * @param ids
      * @return
