@@ -95,3 +95,17 @@ store_path0=/data/fast_data
 add_header Cache-Control no-store;
 ```
 
+---
+## Openresty
+`Linux`安装`openresty`
+>OpenResty(又称：ngx_openresty) 是一个基于 nginx的可伸缩的 Web 平台，由中国人章亦春发起，提供了很多高质量的第三方模块。  
+>OpenResty 是一个强大的 Web 应用服务器，Web 开发人员可以使用 Lua 脚本语言调动 Nginx 支持的各种 C 以及 Lua 模块,更主要的是在性能方面，OpenResty可以 快速构造出足以胜任 10K 以上并发连接响应的超高性能 Web 应用系统。  
+>OpenResty 简单理解成 就相当于封装了nginx,并且集成了LUA脚本，开发人员只需要简单的其提供了模块就可以实现相关的逻辑，而不再像之前，还需要在nginx中自己编写lua的脚本，再进行调用了。
+```shell script
+# 添加仓库
+yum install yum-utils
+yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+#安装
+yum install openresty
+# 安装成功后的目录：/usr/local/openresty
+```
