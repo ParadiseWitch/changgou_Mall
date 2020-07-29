@@ -109,3 +109,7 @@ yum-config-manager --add-repo https://openresty.org/package/centos/openresty.rep
 yum install openresty
 # 安装成功后的目录：/usr/local/openresty
 ```
+
+
+---
+# 测试一下
