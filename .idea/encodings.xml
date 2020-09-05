@@ -9,7 +9,9 @@
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-service-api" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-service-api/changgou-service-goods-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/changgouparent/changgou-service-api/changgou-service-search-api" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-service/changgou-server-file" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/changgouparent/changgou-service/changgou-service-canal" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-service/changgou-service-goods" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/changgouparent/changgou-web" charset="UTF-8" />
   </component>
