@@ -9,7 +9,9 @@ import com.changgou.search.service.SkuService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
@@ -18,6 +20,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,28 +65,46 @@ public class SkuServiceImpl implements SkuService {
 
 	@Override
 	public Map search(Map<String, String> searchMap) {
-/*		//1. 获取关键字
-		String keywords = searchMap.get("keywords");
-		//2. 关键字为空就设置默认值
-		if (StringUtils.isEmpty(keywords)){
-			keywords = "华为";
-		}
-		//3.
-		NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-		//4. Aggregation ->  聚合
-		nativeSearchQueryBuilder.addAggregation(AggregationBuilders.terms("skuCategorygroup").field("CategoryName").size(50));
 
-		*/
+		//搜索条件封装
+		NativeSearchQueryBuilder builder = bulidBasicQuery(searchMap);
 
+		//集合搜索
+		Map<String, Object> map = searchList(builder);
+
+		//分类分组查询实现
+		List<String> categoryList = searchCategoryList(builder);
+		map.put("categoryList",categoryList);
+
+		return map;
+	}
+
+	/**
+	 * 搜索条件封装
+	 * @param searchMap
+	 * @return
+	 */
+	private NativeSearchQueryBuilder bulidBasicQuery(Map<String, String> searchMap) {
 		NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
 
 		if(searchMap!=null && searchMap.size()>0){
 			String keywords = searchMap.get("keywords");
-			if(StringUtils.isEmpty(keywords)){
+			if(!StringUtils.isEmpty(keywords)){
 				builder.withQuery(QueryBuilders.queryStringQuery(keywords).field("name"));
 			}
 		}
+		return builder;
+	}
+
+	/**
+	 * 数据结果集搜索
+	 * @param builder
+	 * @return
+	 */
+	private Map<String, Object> searchList(NativeSearchQueryBuilder builder) {
+		//聚合构造对象(匹配)
 		AggregatedPage<SkuInfo> page = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
+
 		long totalElements = page.getTotalElements();
 		int totalPages = page.getTotalPages();
 		List<SkuInfo> content = page.getContent();
@@ -92,8 +113,36 @@ public class SkuServiceImpl implements SkuService {
 		map.put("rows",content);
 		map.put("totalElements",totalElements);
 		map.put("totalPages",totalPages);
-
 		return map;
+	}
+
+	/**
+	 * 分类分组查询
+	 * @param builder
+	 * @return
+	 */
+	private List<String> searchCategoryList(NativeSearchQueryBuilder builder) {
+		/**
+		 * 分组查询
+		 * add... 添加一个聚合操作
+		 * terms 函数  取别名
+		 * 根据那个Field进行分组查询
+		 */
+		builder.addAggregation(AggregationBuilders.terms("skuCategory").field("categoryName"));
+		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
+
+		/**
+		 * aggregatedPage.getAggregations() 获取聚合数据，是集合(s)，可以根据多个域进行分组
+		 * get("skuCategory")  获取指定域的集合数
+		 */
+		StringTerms stringTerms = aggregatedPage.getAggregations().get("skuCategory");
+		List<String> categoryList = new ArrayList<>();
+		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
+			String categoryName = bucket.getKeyAsString();//其中一个分类名字
+			System.out.println(categoryName);
+			categoryList.add(categoryName);
+		}
+		return categoryList;
 	}
 
 
