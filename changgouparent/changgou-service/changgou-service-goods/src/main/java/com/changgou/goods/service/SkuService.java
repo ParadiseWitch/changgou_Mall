@@ -65,5 +65,5 @@ public interface SkuService {
      * 查询所有Sku
      * @return
      */
-    List<Sku> findAll();
+    PageInfo<Sku> findAll();
 }

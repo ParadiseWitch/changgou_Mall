@@ -1,5 +1,6 @@
 package com.changgou.goods.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.changgou.goods.pojo.Sku;
 import com.changgou.goods.service.SkuService;
 import com.github.pagehelper.PageInfo;
@@ -72,7 +73,9 @@ public class SkuController {
     public Result<List<Sku>> findList(@RequestBody(required = false) @ApiParam(name = "Sku对象",value = "传入JSON数据",required = false) Sku sku){
         //调用SkuService实现条件查询Sku
         List<Sku> list = skuService.findList(sku);
-        return new Result<List<Sku>>(true,StatusCode.OK,"查询成功",list);
+        Result<List<Sku>> skus = new Result<>(true, StatusCode.OK, "查询成功", list);
+        return skus;
+
     }
 
     /***
@@ -139,9 +142,11 @@ public class SkuController {
      */
     @ApiOperation(value = "查询所有Sku",notes = "查询所Sku有方法详情",tags = {"SkuController"})
     @GetMapping
-    public Result<List<Sku>> findAll(){
+    public Result<PageInfo> findAll(){
         //调用SkuService实现查询所有Sku
-        List<Sku> list = skuService.findAll();
-        return new Result<List<Sku>>(true, StatusCode.OK,"查询成功",list) ;
+        PageInfo<Sku> list = skuService.findAll();
+        Result<PageInfo> skus = new Result<>(true, StatusCode.OK, "查询成功", list);
+        //System.out.println(JSON.toJSONString("result:\t" + skus.getData().getList()));
+        return skus;
     }
 }

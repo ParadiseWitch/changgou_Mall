@@ -204,7 +204,8 @@ public class SkuServiceImpl implements SkuService {
      * @return
      */
     @Override
-    public List<Sku> findAll() {
-        return skuMapper.selectAll();
+    public PageInfo<Sku> findAll() {
+
+        return findPage(0,200);
     }
 }
