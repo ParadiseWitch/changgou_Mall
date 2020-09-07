@@ -206,6 +206,6 @@ public class SkuServiceImpl implements SkuService {
     @Override
     public PageInfo<Sku> findAll() {
 
-        return findPage(0,200);
+        return findPage(0,2000);
     }
 }

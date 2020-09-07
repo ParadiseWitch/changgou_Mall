@@ -6,10 +6,9 @@ import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @ClassName com.changgou.search.controller.SkuController
@@ -32,5 +31,10 @@ public class SkuController {
 	public Result importData() {
 		skuService.importData();
 		return new Result(true, StatusCode.OK, "导执行操作成功！");
+	}
+
+	@GetMapping
+	public Map search(@RequestParam(required = false) Map<String,String> searchMap){
+		return skuService.search(searchMap);
 	}
 }

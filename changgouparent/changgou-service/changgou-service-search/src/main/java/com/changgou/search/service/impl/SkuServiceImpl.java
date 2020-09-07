@@ -8,9 +8,17 @@ import com.changgou.search.pojo.SkuInfo;
 import com.changgou.search.service.SkuService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +36,9 @@ public class SkuServiceImpl implements SkuService {
 
 	@Autowired
 	private SkuEsMapper skuEsMapper;
+
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
 
 	/**
 	 * 导入索引库
@@ -48,4 +59,42 @@ public class SkuServiceImpl implements SkuService {
 		//  调用Dao实现数据批量注入
 		skuEsMapper.saveAll(skuInfoList);
 	}
+
+	@Override
+	public Map search(Map<String, String> searchMap) {
+/*		//1. 获取关键字
+		String keywords = searchMap.get("keywords");
+		//2. 关键字为空就设置默认值
+		if (StringUtils.isEmpty(keywords)){
+			keywords = "华为";
+		}
+		//3.
+		NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+		//4. Aggregation ->  聚合
+		nativeSearchQueryBuilder.addAggregation(AggregationBuilders.terms("skuCategorygroup").field("CategoryName").size(50));
+
+		*/
+
+		NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
+
+		if(searchMap!=null && searchMap.size()>0){
+			String keywords = searchMap.get("keywords");
+			if(StringUtils.isEmpty(keywords)){
+				builder.withQuery(QueryBuilders.queryStringQuery(keywords).field("name"));
+			}
+		}
+		AggregatedPage<SkuInfo> page = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
+		long totalElements = page.getTotalElements();
+		int totalPages = page.getTotalPages();
+		List<SkuInfo> content = page.getContent();
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows",content);
+		map.put("totalElements",totalElements);
+		map.put("totalPages",totalPages);
+
+		return map;
+	}
+
+
 }

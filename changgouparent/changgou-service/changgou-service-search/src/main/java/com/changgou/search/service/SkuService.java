@@ -1,5 +1,7 @@
 package com.changgou.search.service;
 
+import java.util.Map;
+
 /**
  * @ClassName com.changgou.search.service.SkuService
  * @Description
@@ -9,4 +11,5 @@ package com.changgou.search.service;
  */
 public interface SkuService {
 	public void importData();
+	public Map search(Map<String,String> searchMap);
 }
