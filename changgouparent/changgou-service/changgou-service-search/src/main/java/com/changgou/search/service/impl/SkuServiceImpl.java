@@ -69,13 +69,19 @@ public class SkuServiceImpl implements SkuService {
 		//集合搜索
 		Map<String, Object> map = searchList(builder);
 
-		//分类分组查询实现
-		List<String> categoryList = searchCategoryList(builder);
-		map.put("categoryList",categoryList);
+		//当用户选择了分类，将分类作为搜索条件，则不需要对分类进行分组搜索，因为分组搜索是用域显示分类搜索条件的
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("category"))) {
+			//分类分组查询实现
+			List<String> categoryList = searchCategoryList(builder);
+			map.put("categoryList",categoryList);
+		}
 
-		//查询品牌集合实现
-		List<String> brandList = searchBrandList(builder);
-		map.put("brandList", brandList);
+		//当用户选择了品牌，将品牌作为搜索条件，则不需要对品牌进行分组搜索，因为分组搜索是用域显示品牌搜索条件的
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("brand"))){
+			//查询品牌集合实现
+			List<String> brandList = searchBrandList(builder);
+			map.put("brandList", brandList);
+		}
 
 		//查询spec集合实现
 		Map<String, Set<String>> specMap = searchSpecList(builder);
@@ -174,7 +180,7 @@ public class SkuServiceImpl implements SkuService {
 	}
 
 	/**
-	 * spec集合查询 	 
+	 * spec集合查询
 	 * @param builder
 	 * @return
 	 */
