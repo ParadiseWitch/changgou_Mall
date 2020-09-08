@@ -8,6 +8,7 @@ import com.changgou.search.pojo.SkuInfo;
 import com.changgou.search.service.SkuService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -102,6 +103,14 @@ public class SkuServiceImpl implements SkuService {
 			if(!StringUtils.isEmpty(keywords)){
 				builder.withQuery(QueryBuilders.queryStringQuery(keywords).field("name"));
 			}
+			if (!StringUtils.isEmpty(searchMap.get("brand"))) {
+				builder.withQuery(QueryBuilders.queryStringQuery(searchMap.get("brand")).field("brandName"));
+			}
+
+			if (!StringUtils.isEmpty(searchMap.get("category"))) {
+				builder.withQuery(QueryBuilders.queryStringQuery(searchMap.get("category")).field("categoryName"));
+			}
+
 		}
 		return builder;
 	}
@@ -149,7 +158,6 @@ public class SkuServiceImpl implements SkuService {
 		List<String> categoryList = new ArrayList<>();
 		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
 			String categoryName = bucket.getKeyAsString();//其中一个分类名字
-			System.out.println(categoryName);
 			categoryList.add(categoryName);
 		}
 		return categoryList;
@@ -173,7 +181,6 @@ public class SkuServiceImpl implements SkuService {
 		List<String> brandList = new ArrayList<>();
 		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
 			String brandName = bucket.getKeyAsString();//其中一个品牌名
-			System.out.println(brandName);
 			brandList.add(brandName);
 		}
 		return brandList;
@@ -195,7 +202,6 @@ public class SkuServiceImpl implements SkuService {
 		List<String> specList = new ArrayList<>();
 		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
 			String specName = bucket.getKeyAsString();//其中一个spec
-			System.out.println(specName);
 			specList.add(specName);
 		}
 		//3.定义一个Map<String,Set>,key是规格名字，防止重复所以用Map，value是规格值，规格值有多个，所以用集合，为了防止规格重复，用Set去除重复
