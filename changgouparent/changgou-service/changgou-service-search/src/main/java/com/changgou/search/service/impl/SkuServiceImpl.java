@@ -9,11 +9,13 @@ import com.changgou.search.service.SkuService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -123,6 +125,36 @@ public class SkuServiceImpl implements SkuService {
 				}
 			}
 
+			//价格区间
+			BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+			if (!StringUtils.isEmpty(searchMap.get("price"))) {
+
+				String price = searchMap.get("price");
+				price = price.replace("元", "").replace("以上", "");
+				String[] prices = price.split("-");
+				boolQueryBuilder.must(QueryBuilders.rangeQuery("price").gt(Integer.parseInt(prices[0])));
+				if(prices.length == 2){
+					boolQueryBuilder.must(QueryBuilders.rangeQuery("price").lte(Integer.parseInt(prices[1])));
+				}
+			}
+
+			builder.withFilter(boolQueryBuilder);
+
+
+			//分页
+			Integer pageNum = 1;
+			Integer size = 3;
+			if(!StringUtils.isEmpty(searchMap.get("pageNum"))){
+				try {
+					pageNum = Integer.valueOf(searchMap.get("pageNum"));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					pageNum = 1;
+				}
+
+			}
+			builder.withPageable(PageRequest.of(pageNum-1,size));
 		}
 		return builder;
 	}
