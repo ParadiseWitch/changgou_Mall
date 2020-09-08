@@ -20,10 +20,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName com.changgou.search.service.impl.SkuServiceImpl
@@ -79,6 +76,10 @@ public class SkuServiceImpl implements SkuService {
 		//查询品牌集合实现
 		List<String> brandList = searchBrandList(builder);
 		map.put("brandList", brandList);
+
+		//查询spec集合实现
+		Map<String, Set<String>> specMap = searchSpecList(builder);
+		map.put("specMap",specMap);
 		return map;
 	}
 
@@ -170,6 +171,54 @@ public class SkuServiceImpl implements SkuService {
 			brandList.add(brandName);
 		}
 		return brandList;
+	}
+
+	/**
+	 * spec集合查询 	 
+	 * @param builder
+	 * @return
+	 */
+	private Map<String, Set<String>> searchSpecList(NativeSearchQueryBuilder builder) {
+
+		builder.addAggregation(AggregationBuilders.terms("skuSpec").field("spec.keyword"));
+		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
+
+
+		//1.获取所有规格数据
+		StringTerms stringTerms = aggregatedPage.getAggregations().get("skuSpec");
+		List<String> specList = new ArrayList<>();
+		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
+			String specName = bucket.getKeyAsString();//其中一个spec
+			System.out.println(specName);
+			specList.add(specName);
+		}
+		//3.定义一个Map<String,Set>,key是规格名字，防止重复所以用Map，value是规格值，规格值有多个，所以用集合，为了防止规格重复，用Set去除重复
+		Map<String, Set<String>> allSpecMap = new HashMap<>();
+		//2.将所有规格数据转换成Map
+		for (String specjson : specList) {
+			Map<String, String> specMap = JSON.parseObject(specjson, Map.class);
+
+
+			//4.循环规格的Map，将数据填充到定义的Map<String,Set>中
+			for (Map.Entry<String, String> entry : specMap.entrySet()) {
+				//4.1 取出当前Map  去除 key  value
+				String key = entry.getKey();
+				String value = entry.getValue();
+
+				Set specSet = allSpecMap.get(key);
+				if (specSet == null) {
+					// 对应的Set == null  =>  new Set
+					specSet = new HashSet<String>();
+				}
+
+
+				specSet.add(value);
+				allSpecMap.put(key,specSet);
+			}
+		}
+
+
+		return allSpecMap;
 	}
 
 
