@@ -111,6 +111,18 @@ public class SkuServiceImpl implements SkuService {
 				builder.withQuery(QueryBuilders.queryStringQuery(searchMap.get("category")).field("categoryName"));
 			}
 
+
+
+			for (Map.Entry<String, String> entry : searchMap.entrySet()) {
+				String key = entry.getKey();
+				if (key.startsWith("spec_")) {
+					//es中type后面有 .keywords 的不分词
+					builder.withQuery(QueryBuilders.queryStringQuery(
+							entry.getValue())
+							.field("specMap." + key.substring(5)));
+				}
+			}
+
 		}
 		return builder;
 	}
