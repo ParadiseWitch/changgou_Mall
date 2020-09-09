@@ -83,31 +83,69 @@ public class SkuServiceImpl implements SkuService {
 		//集合搜索
 		Map<String, Object> map = searchList(builder);
 
-		//当用户选择了分类，将分类作为搜索条件，则不需要对分类进行分组搜索，因为分组搜索是用域显示分类搜索条件的
-		if(searchMap == null || StringUtils.isEmpty(searchMap.get("category"))) {
-			//分类分组查询实现
-			List<String> categoryList = searchCategoryList(builder);
-			map.put("categoryList",categoryList);
-		}
-
-		//当用户选择了品牌，将品牌作为搜索条件，则不需要对品牌进行分组搜索，因为分组搜索是用域显示品牌搜索条件的
-		if(searchMap == null || StringUtils.isEmpty(searchMap.get("brand"))){
-			//查询品牌集合实现
-			List<String> brandList = searchBrandList(builder);
-			map.put("brandList", brandList);
-		}
-
-		//查询spec集合实现
-		Map<String, Set<String>> specMap = searchSpecList(builder);
-		map.put("specMap",specMap);
+		Map<String, Object> groupMap = searchGroupList(builder, searchMap);
+		map.putAll(groupMap);
 		return map;
 	}
 
 	/**
-	 * 搜索条件封装
-	 * @param searchMap
+	 * 分组查询 -> 分类，品牌，规格分组
+	 * @param builder
 	 * @return
 	 */
+	private Map<String, Object> searchGroupList(NativeSearchQueryBuilder builder, Map<String, String> searchMap) {
+		/**
+		 * 分组查询
+		 * add... 添加一个聚合操作
+		 * terms 函数  取别名
+		 * 根据那个Field进行分组查询
+		 */
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("category")))
+			builder.addAggregation(AggregationBuilders.terms("skuCategory").field("categoryName"));
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("brand"))) {
+			builder.addAggregation(AggregationBuilders.terms("skuBrand").field("brandName"));
+		}
+		builder.addAggregation(AggregationBuilders.terms("skuSpec").field("spec.keyword"));
+		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
+
+		//定义一个Map，存储所有分组数据
+		Map<String, Object> groupMapResult = new HashMap<>();
+
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("category"))){
+			StringTerms catygoryTerms = aggregatedPage.getAggregations().get("skuCategory");
+			List<String> categoryList = getGroupList(catygoryTerms);
+			groupMapResult.put("categoryList",categoryList);
+		}
+		if(searchMap == null || StringUtils.isEmpty(searchMap.get("brand"))){
+			StringTerms brandTerms = aggregatedPage.getAggregations().get("skuBrand");
+			List<String> brandList = getGroupList(brandTerms);
+			groupMapResult.put("brandList",brandList);
+		}
+		StringTerms specTerms = aggregatedPage.getAggregations().get("skuSpec");
+		List<String> specList = getGroupList(specTerms);
+		Map<String, Set<String>> specMap = putAllSpec(specList);
+
+		groupMapResult.put("specList",specMap);
+
+		return groupMapResult;
+	}
+
+
+	/**
+	 * 获取分组集合数据
+	 * @param stringTerms
+	 * @return
+	 */
+	private List<String> getGroupList(StringTerms stringTerms) {
+		List<String> groupList = new ArrayList<>();
+		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
+			String fieldName = bucket.getKeyAsString();//其中一个分类名字
+			groupList.add(fieldName);
+		}
+		return groupList;
+	}
+
+
 	private NativeSearchQueryBuilder bulidBasicQuery(Map<String, String> searchMap) {
 		NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
 
@@ -253,76 +291,7 @@ public class SkuServiceImpl implements SkuService {
 		return map;
 	}
 
-	/**
-	 * 分类分组查询
-	 * @param builder
-	 * @return
-	 */
-	private List<String> searchCategoryList(NativeSearchQueryBuilder builder) {
-		/**
-		 * 分组查询
-		 * add... 添加一个聚合操作
-		 * terms 函数  取别名
-		 * 根据那个Field进行分组查询
-		 */
-		builder.addAggregation(AggregationBuilders.terms("skuCategory").field("categoryName"));
-		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
-
-		/**
-		 * aggregatedPage.getAggregations() 获取聚合数据，是集合(s)，可以根据多个域进行分组
-		 * get("skuCategory")  获取指定域的集合数
-		 */
-		StringTerms stringTerms = aggregatedPage.getAggregations().get("skuCategory");
-		List<String> categoryList = new ArrayList<>();
-		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
-			String categoryName = bucket.getKeyAsString();//其中一个分类名字
-			categoryList.add(categoryName);
-		}
-		return categoryList;
-	}
-
-	/**
-	 * 品牌分组查询
-	 * @param builder
-	 * @return
-	 */
-	private List<String> searchBrandList(NativeSearchQueryBuilder builder) {
-		/**
-		 * 品牌集合查询
-		 */
-		builder.addAggregation(AggregationBuilders.terms("skuBrand").field("brandName"));
-		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
-
-		/**
-		 */
-		StringTerms stringTerms = aggregatedPage.getAggregations().get("skuBrand");
-		List<String> brandList = new ArrayList<>();
-		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
-			String brandName = bucket.getKeyAsString();//其中一个品牌名
-			brandList.add(brandName);
-		}
-		return brandList;
-	}
-
-	/**
-	 * spec集合查询
-	 * @param builder
-	 * @return
-	 */
-	private Map<String, Set<String>> searchSpecList(NativeSearchQueryBuilder builder) {
-
-		builder.addAggregation(AggregationBuilders.terms("skuSpec").field("spec.keyword"));
-		AggregatedPage<SkuInfo> aggregatedPage = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
-
-
-		//1.获取所有规格数据
-		StringTerms stringTerms = aggregatedPage.getAggregations().get("skuSpec");
-		List<String> specList = new ArrayList<>();
-		for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
-			String specName = bucket.getKeyAsString();//其中一个spec
-			specList.add(specName);
-		}
-		//3.定义一个Map<String,Set>,key是规格名字，防止重复所以用Map，value是规格值，规格值有多个，所以用集合，为了防止规格重复，用Set去除重复
+	private Map<String, Set<String>> putAllSpec(List<String> specList) {
 		Map<String, Set<String>> allSpecMap = new HashMap<>();
 		//2.将所有规格数据转换成Map
 		for (String specjson : specList) {
@@ -350,7 +319,6 @@ public class SkuServiceImpl implements SkuService {
 
 		return allSpecMap;
 	}
-
 
 
 }
