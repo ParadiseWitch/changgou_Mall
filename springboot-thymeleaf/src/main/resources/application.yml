@@ -1,0 +1,4 @@
+spring:
+    thymeleaf:
+        # 禁止缓存
+        cache: false
