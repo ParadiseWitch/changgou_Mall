@@ -26,7 +26,7 @@ public class SkuController {
 
 	@GetMapping(value = "/list")
 	public String search(@RequestParam(required = false) Map<String,String> searchMap, Model model) {
-		Map<String,Object> resultMap = skuFeign.search(searchMap);
+		Map<String, Object> resultMap = skuFeign.search(searchMap);
 		model.addAttribute("result",resultMap);
 		return "search";
 	}

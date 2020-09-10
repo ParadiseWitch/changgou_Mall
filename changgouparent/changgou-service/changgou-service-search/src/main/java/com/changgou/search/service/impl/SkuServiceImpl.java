@@ -193,7 +193,7 @@ public class SkuServiceImpl implements SkuService {
 
 			//分页
 			Integer pageNum = 1;
-			Integer size = 3;
+			Integer size = 30;
 			if(!StringUtils.isEmpty(searchMap.get("pageNum"))){
 				try {
 					pageNum = Integer.valueOf(searchMap.get("pageNum"));
