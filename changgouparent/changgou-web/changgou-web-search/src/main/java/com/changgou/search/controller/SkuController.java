@@ -28,6 +28,9 @@ public class SkuController {
 	public String search(@RequestParam(required = false) Map<String,String> searchMap, Model model) {
 		Map<String, Object> resultMap = skuFeign.search(searchMap);
 		model.addAttribute("result",resultMap);
+
+		//  将条件存储,用于页面回显
+		model.addAttribute("searchMap", searchMap);
 		return "search";
 	}
 }
