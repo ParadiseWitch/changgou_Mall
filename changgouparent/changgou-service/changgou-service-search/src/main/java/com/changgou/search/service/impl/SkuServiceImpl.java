@@ -81,7 +81,7 @@ public class SkuServiceImpl implements SkuService {
 		NativeSearchQueryBuilder builder = bulidBasicQuery(searchMap);
 
 		//集合搜索
-		Map<String, Object> map = searchList(builder);
+		Map<String, Object> map = searchList(searchMap,builder);
 
 		Map<String, Object> groupMap = searchGroupList(builder, searchMap);
 		map.putAll(groupMap);
@@ -221,7 +221,7 @@ public class SkuServiceImpl implements SkuService {
 	 * @param builder
 	 * @return
 	 */
-	private Map<String, Object> searchList(NativeSearchQueryBuilder builder) {
+	private Map<String, Object> searchList(Map<String, String> searchMap, NativeSearchQueryBuilder builder) {
 
 		//设置高亮条件
 		HighlightBuilder.Field field = new HighlightBuilder.Field("name");
@@ -280,6 +280,26 @@ public class SkuServiceImpl implements SkuService {
 						}
 				);
 
+		//获取搜索封装信息
+		NativeSearchQuery query = builder.build();
+		//可能会报错:UnsupportedOperationException
+		int pageNumber,pageSize;
+		if(!StringUtils.isEmpty(searchMap.get("pageNum"))){
+			Pageable pageable = query.getPageable();
+			try{
+				pageNumber = pageable.getPageNumber();
+				pageSize = pageable.getPageSize();
+			}catch (Exception e){
+				e.printStackTrace();
+				pageNumber = 0;
+				pageSize = 30;
+			}
+		}else {
+			pageNumber = 0;
+			pageSize = 30;
+		}
+
+
 		long totalElements = page.getTotalElements();
 		int totalPages = page.getTotalPages();
 		List<SkuInfo> content = page.getContent();
@@ -287,7 +307,11 @@ public class SkuServiceImpl implements SkuService {
 		Map<String, Object> map = new HashMap<>();
 		map.put("rows",content);
 		map.put("totalElements",totalElements);
+		//FIXME: 无请求参数的时候,totalPages = 1  但是参数pageNum=1时 => totalNum=67
 		map.put("totalPages",totalPages);
+		//
+		map.put("pageNumber",pageNumber);
+		map.put("pageSize",pageSize);
 		return map;
 	}
 

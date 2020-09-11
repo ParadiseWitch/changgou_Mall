@@ -231,8 +231,8 @@ public class Page <T> implements Serializable{
 			//总记录数
 			//当前页
 			//每页显示多少条
-			int cpage =17;
-			Page page = new Page(1001,cpage,50,7);
+			int cpage =3;
+			Page page = new Page(2000,3,30,1);
 			System.out.println("开始页:"+page.getLpage()+"__当前页："+page.getCurrentpage()+"__结束页"+page.getRpage()+"____总页数："+page.getLast());
 	}
 }
