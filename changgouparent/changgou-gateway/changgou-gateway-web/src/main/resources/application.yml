@@ -25,7 +25,7 @@ spring:
                     # 用户请求的域名规则配置,所有以clound.itheima.com的请求都将被路由到 http://localhost:18081 微服务去
                     #    - Host=cloud.itheima.com**
                     #所有以/brand开始的请求,都会被路由到 http://localhost:18081 微服务去
-                        - Path=/api/brand/**
+                        - Path=/api/goods/**
 #                        - Path=/**
                     #所有以/api/brand的请求，都被路由http://localhost:18081微服务
                     #希望该路径由微服务网关自动给我添加上/api前缀，每次请求真实微服务网关的时候，需要使用微服务网关将/api去掉
@@ -42,6 +42,17 @@ spring:
                                 redis-rate-limiter.replenishRate: 1
                                 # 允许并发有4个请求[宽限的个数]
                                 redis-rate-limiter.burstCapacity: 1
+                                  # 唯一标识符
+                -   id: changgou_user_route
+                  # 用户请求需要路由到该服务[指定要路由的服务]
+                  # uri: http://localhost:18081
+                  # lb:使用LoadBalancerClient实现负载均衡，后面goods是微服务的名称[主要应用于集群环境]
+                    uri: lb://user
+                    # 路由断言,路由规则配置
+                    predicates:
+                        - Path=/api/address/**,/api/area/**,/api/city/**,/api/provincess/**,/api/user/**
+                    filters:
+                        - StripPrefix=1
 
     redis:
         host: 192.168.56.104
