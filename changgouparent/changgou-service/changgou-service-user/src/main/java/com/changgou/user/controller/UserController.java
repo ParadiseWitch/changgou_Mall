@@ -3,6 +3,7 @@ package com.changgou.user.controller;
 import com.changgou.user.pojo.User;
 import com.changgou.user.service.UserService;
 import com.github.pagehelper.PageInfo;
+import entity.BCrypt;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    /**
+     * 用户登录
+     * @param username
+     * @param password
+     * @return
+     */
+    @GetMapping(value = "login")
+    public Result login(String username, String password) {
+        //查询用户信息
+        User user = userService.findById(username);
+        //对比密码 TODO:密文
+        if (BCrypt.checkpw(password,user.getPassword())) {
+            //yes -> 成功
+            return new Result(true,StatusCode.OK,"登陆成功!",user);
+        }
+        //no ->
+        return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误!");
+    }
     /***
      * User分页条件搜索实现
      * @param user
