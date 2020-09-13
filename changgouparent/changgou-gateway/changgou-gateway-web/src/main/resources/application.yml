@@ -1,11 +1,8 @@
 spring:
-    application:
-        name: gateway-web
     cloud:
         gateway:
-            # 全局配置
             globalcors:
-                cors-configurations:
+                corsConfigurations:
                     '[/**]': # 匹配所有请求
                         allowedOrigins: "*" #跨域处理 允许所有的域
                         allowedMethods: # 支持的方法
@@ -14,45 +11,24 @@ spring:
                             - PUT
                             - DELETE
             routes:
-                    # 唯一标识符
-                -   id: changgou_goods_route
-                    # 用户请求需要路由到该服务[指定要路由的服务]
-                    # uri: http://localhost:18081
-                    # lb:使用LoadBalancerClient实现负载均衡，后面goods是微服务的名称[主要应用于集群环境]
-                    uri: lb://goods
-                    # 路由断言,路由规则配置
-                    predicates:
-                    # 用户请求的域名规则配置,所有以clound.itheima.com的请求都将被路由到 http://localhost:18081 微服务去
-                    #    - Host=cloud.itheima.com**
-                    #所有以/brand开始的请求,都会被路由到 http://localhost:18081 微服务去
-                        - Path=/api/goods/**
-#                        - Path=/**
-                    #所有以/api/brand的请求，都被路由http://localhost:18081微服务
-                    #希望该路径由微服务网关自动给我添加上/api前缀，每次请求真实微服务网关的时候，需要使用微服务网关将/api去掉
-                    filters:
-                    #将请求路径中的第一个路径去掉,请求路径以/区分.一个/代表一个路径  真实请求会去掉第一个路由
-                        - StripPrefix=1
-                    #用户请求/**->/brand/**,并且将该请求路由到 http://localhost:18081 微服务  真实请求会在路由前加一个前缀
-#                        - PrefixPath=/
-                        -   name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory   RequestRateLimiter:局部过滤器
-                            args:
-                                # 用户身份唯一识别标识符  和Bean名对应: ipKeyResolver
-                                key-resolver: "#{@ipKeyResolver}"
-                                # 每秒只允许有一个请求
-                                redis-rate-limiter.replenishRate: 1
-                                # 允许并发有4个请求[宽限的个数]
-                                redis-rate-limiter.burstCapacity: 1
-                                  # 唯一标识符
-                -   id: changgou_user_route
-                  # 用户请求需要路由到该服务[指定要路由的服务]
-                  # uri: http://localhost:18081
-                  # lb:使用LoadBalancerClient实现负载均衡，后面goods是微服务的名称[主要应用于集群环境]
-                    uri: lb://user
-                    # 路由断言,路由规则配置
-                    predicates:
-                        - Path=/api/address/**,/api/area/**,/api/city/**,/api/provincess/**,/api/user/**
-                    filters:
-                        - StripPrefix=1
+                - id: changgou_goods_route
+                  uri: lb://goods
+                  predicates:
+                      - Path=/api/album/**,/api/brand/**,/api/cache/**,/api/categoryBrand/**,/api/category/**,/api/para/**,/api/pref/**,/api/sku/**,/api/spec/**,/api/spu/**,/api/stockBack/**,/api/template/**
+                  filters:
+                      - StripPrefix=1
+                      - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
+                        args:
+                            key-resolver: "#{@ipKeyResolver}"
+                            redis-rate-limiter.replenishRate: 1
+                            redis-rate-limiter.burstCapacity: 1
+                #用户微服务
+                - id: changgou_user_route
+                  uri: lb://user
+                  predicates:
+                      - Path=/api/user/**,/api/address/**,/api/areas/**,/api/cities/**,/api/provinces/**
+                  filters:
+                      - StripPrefix=1
 
     redis:
         host: 192.168.56.104

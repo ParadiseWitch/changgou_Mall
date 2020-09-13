@@ -1,15 +1,22 @@
 package com.changgou.user.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.changgou.user.pojo.User;
 import com.changgou.user.service.UserService;
 import com.github.pagehelper.PageInfo;
 import entity.BCrypt;
+import entity.JwtUtil;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /****
  * @Author:shenkunlin
@@ -33,13 +40,25 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "login")
-    public Result login(String username, String password) {
+    public Result login(String username, String password, HttpServletResponse response) {
         //查询用户信息
         User user = userService.findById(username);
-        //对比密码 TODO:密文
-        if (BCrypt.checkpw(password,user.getPassword())) {
+        //对比密码
+        if (user!=null && BCrypt.checkpw(password,user.getPassword())) {
             //yes -> 成功
-            return new Result(true,StatusCode.OK,"登陆成功!",user);
+            Map<String,Object> tokenMap = new HashMap<String,Object>();
+            tokenMap.put("role","USER");
+            tokenMap.put("success","SUCCESS");
+            tokenMap.put("username", username);
+            String token = JwtUtil.createJWT(UUID.randomUUID().toString(), JSON.toJSONString(tokenMap), null);
+
+            //把令牌信息传入Cookie
+            Cookie cookie = new Cookie("Authorization", token);
+            cookie.setDomain("localhost");
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            //把令牌作为参数给用户
+            return new Result(true,StatusCode.OK,"登陆成功!",token);
         }
         //no ->
         return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误!");
