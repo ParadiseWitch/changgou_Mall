@@ -9,6 +9,7 @@ import entity.JwtUtil;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -155,8 +156,10 @@ public class UserController {
 
     /***
      * 查询User全部数据
+     * 只允许管理员访问
      * @return
      */
+    @PreAuthorize("hasAnyRole('admin')")
     @GetMapping
     public Result<List<User>> findAll(){
         //调用UserService实现查询所有User
