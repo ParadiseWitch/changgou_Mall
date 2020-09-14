@@ -70,29 +70,35 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 		if(StringUtils.isEmpty(token)){
 			//	状态码: 401
 			response.setStatusCode(HttpStatus.UNAUTHORIZED);
-			System.out.println("no");
 			// 响应空数据
 			return response.setComplete();
+		}else{
+			if (!hasToken){
+				//有令牌且令牌不在头信息
+				if (!token.startsWith("bearer ") && !token.startsWith("Bearer")){
+					//头信息中的令牌不以 bearer/Bearer 打头
+
+					token = "breaer " + token;
+					//将令牌封装到头
+					request.mutate().header(AUTHORIZE_TOKEN,token);
+				}
+			}
 		}
 
 		//有令牌 => 检测是否有效
 		//解析令牌数据
-		try {
-			Claims claims = JwtUtil.parseJWT(token);
-		} catch (Exception e) {
-			e.printStackTrace();
-			//无效拦截
-			//解析失败，响应401错误
-			System.out.println("no:err");
-			response.setStatusCode(HttpStatus.UNAUTHORIZED);
-			return response.setComplete();
-		}
+		//try {
+		//	Claims claims = JwtUtil.parseJWT(token);
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//	//无效拦截
+		//	//解析失败，响应401错误
+		//	response.setStatusCode(HttpStatus.UNAUTHORIZED);
+		//	return response.setComplete();
+		//}
 
-		//将令牌封装到头
-		request.mutate().header(AUTHORIZE_TOKEN,token);
 
 		//有效放行
-		System.out.println("yes");
 		return chain.filter(exchange);
 	}
 
