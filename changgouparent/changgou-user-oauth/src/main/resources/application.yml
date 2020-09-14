@@ -33,7 +33,7 @@ auth:
   cookieMaxAge: -1
 encrypt:
   key-store:
-    location: classpath:/changgou.jks
-    secret: changgou
-    alias: changgou
-    password: changgou
+    location: classpath:/changgou68.jks
+    secret: changgou68
+    alias: changgou68
+    password: changgou68
