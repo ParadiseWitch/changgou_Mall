@@ -13,6 +13,24 @@ public class UserJwt extends User {
 
     private String comny;//设置公司
 
+    private String address;//设置地址
+
+    public String getComny() {
+        return comny;
+    }
+
+    public void setComny(String comny) {
+        this.comny = comny;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public UserJwt(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }

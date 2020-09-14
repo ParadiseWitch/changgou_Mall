@@ -14,6 +14,7 @@ spring:
         min-idle: 0
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
+    # TODO: 没有changgou_oauth这个表
     url: jdbc:mysql://192.168.56.104:3306/changgou_oauth?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=UTC
     username: root
     password: root
