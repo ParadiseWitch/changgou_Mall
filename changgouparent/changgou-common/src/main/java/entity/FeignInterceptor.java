@@ -1,9 +1,8 @@
-package com.changgou.order.interceptor;
+package entity;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -16,8 +15,7 @@ import java.util.Enumeration;
  * @Date 2020/9/16 0016 20:23
  * @Version v1.0
  */
-@Configuration
-public class TokenInterceptor implements RequestInterceptor {
+public class FeignInterceptor implements RequestInterceptor {
 
 	@Override
 	public void apply(RequestTemplate requestTemplate) {
