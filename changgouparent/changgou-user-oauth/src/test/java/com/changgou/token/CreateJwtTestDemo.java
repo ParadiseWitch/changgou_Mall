@@ -52,9 +52,9 @@ public class CreateJwtTestDemo {
 
 		//定义payload
 		Map<String, Object> payload = new HashMap<>();
-		payload.put("id","1");
-		payload.put("name","Maid");
-		payload.put("roles","ROLE_VIP,ROLE_USER");
+		payload.put("nikename","Maid");
+		payload.put("address","sz");
+		payload.put("authorities",new String[]{"admin","oauth"});
 
 		//使用私钥生成令牌
 		Jwt jwt = JwtHelper.encode(JSON.toJSONString(payload), new RsaSigner(privateKey));
@@ -68,7 +68,7 @@ public class CreateJwtTestDemo {
 	 */
 	@Test
 	public void testParseToken(){
-		String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6IlJPTEVfVklQLFJPTEVfVVNFUiIsIm5hbWUiOiJNYWlkIiwiaWQiOiIxIn0.lWm5eVakOndBgk1LNxt7xXrXzVSPfNzV2qAfxN4dc92Ize0wEF13gqJ6F_E2j0xwDCKl2WEtyoBtRka6AGCFIN_ewJ4QoIw8ExLvzr6xOkGMX4ngaI2zAFktgjkaEJEdHzqmMTwPaUSfFwJnjXCuCiOLpS5ZR4zQ1OYnqm8UzwV-Uz1mlJUmzUyVATqwMDKISgVmGxQvKs6Va8rPO09xWbgXJ6EKm5QFXNutKxDk1_H8IpPP4QT_KPIET2lh5XcSiVySwYEBNw2xmlxF4Lpl-beuDfc3HKohd9a_A3wrIDDfrj5XGBdnLkKCtD3HPiUIwJT5PhAxAeNeG2KBb0lf9Q";
+		String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZGRyZXNzIjoic3oiLCJuaWtlbmFtZSI6Ik1haWQiLCJhdXRob3JpdGllcyI6WyJhZG1pbiIsIm9hdXRoIl19.QUzi8IETF9GgjRGd81GNx7qCGnD0g8qaVeyAZX_-J5Bdu4N7OUe9Ys0pkN9iU9gQTJAql0Nj2mGeq9zDk27dzW8RVnoHtg5nKBWtAfJETuISiAdsEpJWfTbJGCE2Fp44xv3cPjGnFjRpKp4UwkjkxLNAs6IIk0okIdGip5a_odw73aewsHHF1T9vmKricvLEG_PkW3FDJKCIGhHlwHWJuLs8Y8p9UNgEWWADGjuUT900dZG3DpFYFMOAwtHfBTFo2iP3ODd3OHQeKTXh9IpNlXIwER0soRg71BchNcALtaJGg7iz1Ihzi3RGALmFuZUkcgIpbEPb8z3aF_EusQVH3g";
 		String publicKey = "-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsCeOgh/AyvfMsT7XhqoY5+eInOUFzgBG9zsKz+g1K1YYe48SngZejUOHNiN40lZOoZCdMVaVYDQxrCYvhoJ6mAp6MWHY2CWjdrDCWg+BFjzY6KlVq4NSiypzhTqtaRHOK4god53Ryb718uJWMVpu+7f1sj/nOreRuNmgMxRcECprx7YzVPw7WhgnZjK3UQoDV9TEQMJ7FgZYTG/cKTAPLJFvVheeozzhxW5Ta5vC232v6lwOdhMjP6fAbKC2CURQlCCDxoln6P1VojvPqA6dkpyJhoFdbqG2aYdKUc7JB4YWsS1Z3NAqBtEib8XDFjNqedEH1tLUHKpXsGEkaBNCAwIDAQAB-----END PUBLIC KEY-----";
 		Jwt jwt = JwtHelper.decodeAndVerify(
 				token,
