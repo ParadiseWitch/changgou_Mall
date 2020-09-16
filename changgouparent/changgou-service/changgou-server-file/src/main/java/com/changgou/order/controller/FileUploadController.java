@@ -1,4 +1,4 @@
-package com.changgou.controller;
+package com.changgou.order.controller;
 
 import com.changgou.file.pojo.FastDFSFile;
 import com.changgou.file.util.FastDFSUtil;
