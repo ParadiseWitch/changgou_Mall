@@ -147,8 +147,8 @@ public class UserController {
      * @param id
      * @return
      */
-    @GetMapping("/{id}")
-    public Result<User> findById(@PathVariable String id){
+    @GetMapping({"/{id}","/load/{id}"})
+    public Result<User> findById(@PathVariable(name="id") String id){
         //调用UserService实现根据主键查询User
         User user = userService.findById(id);
         return new Result<User>(true,StatusCode.OK,"查询成功",user);
