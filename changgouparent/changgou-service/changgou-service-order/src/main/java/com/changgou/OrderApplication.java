@@ -13,7 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @Version v1.0
  */
 @EnableEurekaClient
-@MapperScan
+@MapperScan(basePackages = "com.changgou.order.dao")
 @SpringBootApplication
 public class OrderApplication {
 	public static void main(String[] args) {
