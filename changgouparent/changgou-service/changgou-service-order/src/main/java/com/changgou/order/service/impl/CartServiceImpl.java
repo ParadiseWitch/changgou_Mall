@@ -34,6 +34,13 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public void add(Integer num, Long goodsId, String username) {
+		if(num <= 0){
+			redisTemplate.boundHashOps("Cart_" + username).delete(goodsId);
+			if(redisTemplate.boundHashOps("Cart_"+username).size() <= 0){
+				redisTemplate.delete("Cart_"+username);
+			}
+			return;
+		}
 		Result<Sku> skuResult = skuFeign.findById(goodsId.toString());
 		Sku sku = skuResult.getData();
 		Result<Spu> spuResult = spuFeign.findById(sku.getSpuId());
