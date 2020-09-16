@@ -5,11 +5,16 @@ import com.changgou.order.pojo.OrderItem;
 import com.changgou.order.service.CartService;
 import entity.Result;
 import entity.StatusCode;
+import entity.TokenDecode;
+import org.omg.IOP.ServiceContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName com.changgou.controller.CartController
@@ -28,12 +33,13 @@ public class CartController {
 	 * 加入购物车
 	 * @param num
 	 * @param goodsId
-	 * @param userName
 	 * @return
 	 */
 	@RequestMapping("/add")
-	public Result add(Integer num,Long goodsId, String userName) {
-		cartService.add(num,goodsId,"szitheima");
+	public Result add(Integer num,Long goodsId) {
+		Map<String, String> userInfo = TokenDecode.getUserInfo();
+		String username = userInfo.get("username");
+		cartService.add(num,goodsId,username);
 		return new Result(true, StatusCode.OK, "加入购物车成功!");
 	}
 
@@ -43,7 +49,8 @@ public class CartController {
 	 */
 	@RequestMapping("/list")
 	public Result<List<OrderItem>> list(){
-		String username = "szitheima";
+		Map<String, String> userInfo = TokenDecode.getUserInfo();
+		String username = userInfo.get("username");
 		List<OrderItem> list = cartService.list(username);
 		return new Result<List<OrderItem>>(true,StatusCode.OK,"购物车查询成功",list);
 	}
