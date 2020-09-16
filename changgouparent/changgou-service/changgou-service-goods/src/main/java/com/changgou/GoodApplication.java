@@ -19,7 +19,6 @@ import javax.swing.*;
  */
 @SpringBootApplication
 @EnableEurekaClient  //开启eureka客户端
-@EnableFeignClients("com.changgou.goods.feign")
 @MapperScan(basePackages = "com.changgou.goods.dao")
 /*
  * 开启通用Mapper的包扫描
