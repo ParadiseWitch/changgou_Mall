@@ -20,6 +20,16 @@ eureka:
             defaultZone: http://127.0.0.1:7001/eureka
     instance:
         prefer-ip-address: true
-#feign:
-#    hystrix:
-#        enabled: true
+feign:
+    hystrix:
+        enabled: true
+#hystrix 配置
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        timeoutInMilliseconds: 10000
+                    #信号量隔离  此时不会开启新线程
+                    strategy: SEMAPHORE
