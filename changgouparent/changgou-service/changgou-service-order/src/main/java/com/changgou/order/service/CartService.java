@@ -1,6 +1,9 @@
 package com.changgou.order.service;
 
+import com.changgou.order.pojo.OrderItem;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @ClassName com.changgou.service.CartService
@@ -11,4 +14,6 @@ import org.springframework.stereotype.Service;
  */
 public interface CartService {
 	public void add(Integer num, Long goodsId,String goodsName);
+
+	public List<OrderItem> list(String username);
 }

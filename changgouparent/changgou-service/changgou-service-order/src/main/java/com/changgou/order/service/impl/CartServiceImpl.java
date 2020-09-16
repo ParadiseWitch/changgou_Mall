@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @ClassName com.changgou.service.impl.CartServiceImpl
  * @Description
@@ -45,6 +47,16 @@ public class CartServiceImpl implements CartService {
 
 
 
+	}
+
+	/**
+	 * 查询所有购物车数据
+	 * @param username
+	 * @return
+	 */
+	@Override
+	public List<OrderItem> list(String username) {
+		return redisTemplate.boundHashOps("Cart_" + username).values();
 	}
 
 	private OrderItem createOrderItem(Integer num, Long goodsId, Sku sku, Spu spu) {
