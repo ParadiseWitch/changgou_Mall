@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import entity.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -21,4 +22,7 @@ import java.util.List;
 public interface SkuFeign {
 	@GetMapping
 	Result<PageInfo> findAll();
+
+	@GetMapping("/{id}")
+	public Result<Sku> findById(@PathVariable String id);
 }
