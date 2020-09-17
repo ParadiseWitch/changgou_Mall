@@ -5,6 +5,7 @@ import com.changgou.user.service.AddressService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
+import entity.TokenDecode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,12 @@ public class AddressController {
         return new Result<PageInfo>(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
+    @GetMapping("/user/list")
+    public Result<List<Address>> list() {
+        String username = TokenDecode.getUserInfo().get("username");
+        List<Address> list = addressService.list(username);
+        return new Result<List<Address>>(true,StatusCode.OK,"查询地址成功!",list);
+    }
     /***
      * 多条件搜索品牌数据
      * @param address
