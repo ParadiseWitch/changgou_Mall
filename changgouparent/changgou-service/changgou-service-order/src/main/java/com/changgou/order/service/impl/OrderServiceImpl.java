@@ -1,15 +1,21 @@
 package com.changgou.order.service.impl;
 
+import com.changgou.order.dao.OrderItemMapper;
 import com.changgou.order.dao.OrderMapper;
 import com.changgou.order.pojo.Order;
+import com.changgou.order.pojo.OrderItem;
 import com.changgou.order.service.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import entity.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /****
@@ -22,6 +28,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private IdWorker idWorker;
 
 
     /**
@@ -214,7 +229,46 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void add(Order order){
-        orderMapper.insert(order);
+        /**
+         * todo:价格校验
+         * todo:增加需求: 可以只为购物车中的一部分订单明细(OrderItem)勾选上去提交订单
+         * todo:清空购物车(Redis), 可以部分
+         */
+        order.setId(String.valueOf(idWorker.nextId()));
+        order.setCreateTime(new Date());
+        order.setUpdateTime(order.getCreateTime());
+        order.setIsDelete("0");  // 0未删除
+        order.setSourceType("1"); // 支付来源: web
+        order.setOrderStatus("0"); // 0未支付
+        order.setPayStatus("0"); // 0未支付
+
+        String username = order.getUsername();
+        //读取Redis中的购物车
+        List<OrderItem> orderItems = redisTemplate.boundHashOps("Cart_" + username).values();
+
+        int totleNum = 0;
+        int totleMoney = 0;
+        for (OrderItem orderItem : orderItems) {
+            totleNum += orderItem.getNum();
+            totleMoney += orderItem.getMoney();
+            //订单明细的ID
+            orderItem.setId(String.valueOf(idWorker.nextId()));
+            //订单明细设置订单ID
+            orderItem.setOrderId(order.getId());
+
+            //数据库插入订单明细信息
+            orderItemMapper.insert(orderItem);
+        }
+
+        order.setPayMoney(totleMoney);
+        order.setTotalMoney(totleMoney);
+        order.setTotalNum(totleNum);
+
+        //数据库插入订单信息
+        orderMapper.insertSelective(order);
+
+
+
     }
 
     /**

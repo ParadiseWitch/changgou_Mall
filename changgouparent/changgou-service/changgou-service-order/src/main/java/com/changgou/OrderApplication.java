@@ -1,6 +1,7 @@
 package com.changgou;
 
 import entity.FeignInterceptor;
+import entity.IdWorker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -32,5 +33,10 @@ public class OrderApplication {
 	@Bean
 	public FeignInterceptor feignInterceptor(){
 		return new FeignInterceptor();
+	}
+
+	@Bean
+	public IdWorker idWorker(){
+		return new IdWorker(0,0);
 	}
 }

@@ -5,6 +5,7 @@ import com.changgou.order.service.OrderService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
+import entity.TokenDecode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,8 +98,10 @@ public class OrderController {
      */
     @PostMapping
     public Result add(@RequestBody   Order order){
+        String username = TokenDecode.getUserInfo().get("username");
         //调用OrderService实现添加Order
         orderService.add(order);
+        order.setUsername(username);
         return new Result(true,StatusCode.OK,"添加成功");
     }
 
