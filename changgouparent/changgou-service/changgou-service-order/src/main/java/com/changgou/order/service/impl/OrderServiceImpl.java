@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -231,8 +232,6 @@ public class OrderServiceImpl implements OrderService {
     public void add(Order order){
         /**
          * todo:价格校验
-         * todo:增加需求: 可以只为购物车中的一部分订单明细(OrderItem)勾选上去提交订单
-         * todo:清空购物车(Redis), 可以部分
          */
         order.setId(String.valueOf(idWorker.nextId()));
         order.setCreateTime(new Date());
@@ -244,7 +243,14 @@ public class OrderServiceImpl implements OrderService {
 
         String username = order.getUsername();
         //读取Redis中的购物车
-        List<OrderItem> orderItems = redisTemplate.boundHashOps("Cart_" + username).values();
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (String skuId : order.getSkuIds()) {
+            OrderItem orderItem = (OrderItem)redisTemplate.boundHashOps("Cart_" + username).get(Long.parseLong(skuId));
+            orderItems.add(orderItem);
+            redisTemplate.boundHashOps("Cart_" + username).delete(Long.parseLong(skuId));
+        }
+
 
         int totleNum = 0;
         int totleMoney = 0;

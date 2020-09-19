@@ -100,8 +100,8 @@ public class OrderController {
     public Result add(@RequestBody   Order order){
         String username = TokenDecode.getUserInfo().get("username");
         //调用OrderService实现添加Order
-        orderService.add(order);
         order.setUsername(username);
+        orderService.add(order);
         return new Result(true,StatusCode.OK,"添加成功");
     }
 

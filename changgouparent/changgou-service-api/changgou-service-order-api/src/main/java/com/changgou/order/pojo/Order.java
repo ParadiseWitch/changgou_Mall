@@ -5,6 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /****
  * @Author:shenkunlin
@@ -95,6 +96,16 @@ public class Order implements Serializable{
 
     @Column(name = "is_delete")
 	private String isDelete;//是否删除
+
+	public List<String> getSkuIds() {
+		return skuIds;
+	}
+
+	public void setSkuIds(List<String> skuIds) {
+		this.skuIds = skuIds;
+	}
+
+	private List<String> skuIds;
 
 
 
