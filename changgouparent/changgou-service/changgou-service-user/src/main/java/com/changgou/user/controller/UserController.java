@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.changgou.user.pojo.User;
 import com.changgou.user.service.UserService;
 import com.github.pagehelper.PageInfo;
-import entity.BCrypt;
-import entity.JwtUtil;
-import entity.Result;
-import entity.StatusCode;
+import entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -165,5 +162,17 @@ public class UserController {
         //调用UserService实现查询所有User
         List<User> list = userService.findAll();
         return new Result<List<User>>(true, StatusCode.OK,"查询成功",list) ;
+    }
+
+    /**
+     * 添加用户积分
+     * @param points
+     * @return
+     */
+    @GetMapping("/points/add")
+    public Result addPoints(Integer points){
+        String username = TokenDecode.getUserInfo().get("username");
+        userService.addPoints(username,points);
+        return new Result(true,StatusCode.OK,"增加用户积分成功!");
     }
 }

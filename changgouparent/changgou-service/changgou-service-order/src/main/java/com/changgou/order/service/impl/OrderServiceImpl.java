@@ -6,10 +6,12 @@ import com.changgou.order.dao.OrderMapper;
 import com.changgou.order.pojo.Order;
 import com.changgou.order.pojo.OrderItem;
 import com.changgou.order.service.OrderService;
+import com.changgou.user.feign.UserFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import entity.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private SkuFeign skuFeign;
+
+    @Autowired
+    private UserFeign userFeign;
 
 
     /**
@@ -286,6 +291,8 @@ public class OrderServiceImpl implements OrderService {
         //数据库插入订单信息
         orderMapper.insertSelective(order);
 
+        //添加用户活跃积分度  +1
+        userFeign.addPoints(1);
 
 
     }
