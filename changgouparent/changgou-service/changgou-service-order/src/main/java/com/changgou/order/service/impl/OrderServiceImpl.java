@@ -1,5 +1,6 @@
 package com.changgou.order.service.impl;
 
+import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.dao.OrderItemMapper;
 import com.changgou.order.dao.OrderMapper;
 import com.changgou.order.pojo.Order;
@@ -15,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /****
  * @Author:shenkunlin
@@ -38,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private SkuFeign skuFeign;
 
 
     /**
@@ -254,6 +256,10 @@ public class OrderServiceImpl implements OrderService {
 
         int totleNum = 0;
         int totleMoney = 0;
+
+        // 封装递减数据
+        Map<String, Integer> decrmap = new HashMap<>();
+
         for (OrderItem orderItem : orderItems) {
             totleNum += orderItem.getNum();
             totleMoney += orderItem.getMoney();
@@ -261,10 +267,17 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setId(String.valueOf(idWorker.nextId()));
             //订单明细设置订单ID
             orderItem.setOrderId(order.getId());
+            //是否退货
+            orderItem.setIsReturn("0");
+
+            decrmap.put(orderItem.getSkuId(),orderItem.getNum());
 
             //数据库插入订单明细信息
             orderItemMapper.insert(orderItem);
+
         }
+        //库存递减
+        skuFeign.decrCount(decrmap);
 
         order.setPayMoney(totleMoney);
         order.setTotalMoney(totleMoney);

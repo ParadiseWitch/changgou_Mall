@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -207,5 +208,21 @@ public class SkuServiceImpl implements SkuService {
     public PageInfo<Sku> findAll() {
 
         return findPage(0,2000);
+    }
+
+    @Override
+    public void decrCount(Map<String, Integer> decrmap) {
+        for (Map.Entry<String, Integer> entry : decrmap.entrySet()) {
+            String id = entry.getKey();
+            Object o = entry.getValue();
+            Integer num = Integer.valueOf(o.toString());
+
+            System.out.println(num);
+            int count = skuMapper.decrCount(id, num);
+            if(count<=0){
+                throw new Error("库存不足,请回滚!");
+            }
+        }
+        System.out.println(decrmap.entrySet());
     }
 }

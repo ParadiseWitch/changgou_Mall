@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -148,5 +149,16 @@ public class SkuController {
         Result<PageInfo> skus = new Result<>(true, StatusCode.OK, "查询成功", list);
         //System.out.println(JSON.toJSONString("result:\t" + skus.getData().getList()));
         return skus;
+    }
+
+    /**
+     * 库存递减
+     * @param decrmap
+     * @return
+     */
+    @GetMapping("/decr/count")
+    public Result decrCount(@RequestParam Map<String,Integer> decrmap){
+        skuService.decrCount(decrmap);
+        return new Result(true,StatusCode.OK,"库存递减成功!");
     }
 }
