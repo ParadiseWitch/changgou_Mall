@@ -16,4 +16,12 @@ public interface WeixinPayService {
 	 * @return
 	 */
 	Map createnative(Map<String,String> parameterMap);
+
+	/**
+	 * 查询微信支付状态
+	 * @param outtradeno
+	 * @return
+	 */
+	Map queryStatus(String outtradeno);
+
 }

@@ -77,4 +77,41 @@ public class WeixinPayServiceImpl implements WeixinPayService {
 		}
 		return null;
 	}
+
+	/**
+	 * 查询支付状态
+	 * @param outtradeno
+	 * @return
+	 */
+	@Override
+	public Map queryStatus(String outtradeno) {
+		try {
+			//参数
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("appid", appid);
+			map.put("mch_id", partner);
+			map.put("nonce_str", WXPayUtil.generateNonceStr());
+			//订单号
+			map.put("out_trade_no", outtradeno);
+			//签名, Map转XML字符串, 可以携带签名
+			String xmlParameters = WXPayUtil.generateSignedXml(map, partnerkey);
+
+			//url
+			String url = "https://api.mch.weixin.qq.com/pay/orderquery";
+			HttpClient httpClient = new HttpClient(url);
+			httpClient.setHttps(true);
+			httpClient.setXmlParam(xmlParameters);
+			httpClient.post();
+
+			//res
+			String result = httpClient.getContent();
+
+			//toMap
+			Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
+			return resultMap;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

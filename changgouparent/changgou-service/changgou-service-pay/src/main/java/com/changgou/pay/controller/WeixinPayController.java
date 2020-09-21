@@ -4,10 +4,7 @@ import com.changgou.pay.service.WeixinPayService;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,4 +27,11 @@ public class WeixinPayController {
 		Map<String, String> resultMap = weixinPayService.createnative(parameterMap);
 		return new Result(true, StatusCode.OK, "创建二维码预付订单成功!",resultMap);
 	}
+
+	@GetMapping("/status/query")
+	public Result queryStatus(String outtradeno){
+		Map map = weixinPayService.queryStatus(outtradeno);
+		return new Result(true, StatusCode.OK, "查询支付状态成功!", map);
+	}
+
 }
