@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /****
@@ -46,6 +48,48 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserFeign userFeign;
 
+
+    /**
+     * 删除订单
+     * @param id
+     */
+    @Override
+    public void deleteOrder(String outtradeno) {
+        //改状态
+        Order order = orderMapper.selectByPrimaryKey(outtradeno);
+        order.setUpdateTime(new Date());
+        order.setPayStatus("2");    //支付失败
+        //=>数据库
+        orderMapper.updateByPrimaryKeySelective(order);
+
+        //TODO: 回滚库存 => 调用goods微服务
+
+    }
+
+    /**
+     * 修改订单状态
+     * 1. 修改支付时间
+     * 2. 修改支付状态
+     * @param outtradeno    订单号
+     * @param paytime       支付时间
+     * @param transactionid 交易流水号
+     */
+    @Override
+    public void updateStatus(String outtradeno, String paytime, String transactionid) throws ParseException {
+        //时间转换
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date payDate = simpleDateFormat.parse(paytime);
+
+        //查询订单
+        Order order = orderMapper.selectByPrimaryKey(outtradeno);
+        //修改订单信息
+        order.setPayTime(payDate);
+        order.setPayType("1");
+        order.setTransactionId(transactionid);  //交易流水号
+
+        //修改到数据库
+        orderMapper.updateByPrimaryKeySelective(order);
+    }
 
     /**
      * Order条件+分页查询
