@@ -5,6 +5,12 @@ spring:
         name: pay
     main:
         allow-bean-definition-overriding: true
+    rabbitmq:
+        host: 192.168.56.104
+        port: 5672
+        username: guest
+        password: guest
+
 eureka:
     client:
         service-url:
@@ -31,3 +37,13 @@ weixin:
     partner: 1473426802
     partnerkey: T6m9iK73b0kn9g5v426MKfHQH7X8rKwb
     notifyurl: http://34327a504c.eicp.vip/weixin/pay/notify/url
+
+#位置支付交换机和队列
+mq:
+    pay:
+        exchange:
+            order: exchange.order
+        queue:
+            order: queue.order
+        routing:
+            key: queue.order
