@@ -36,7 +36,7 @@ weixin:
     appid: wx8397f8696b538317
     partner: 1473426802
     partnerkey: T6m9iK73b0kn9g5v426MKfHQH7X8rKwb
-    notifyurl: http://34327a504c.eicp.vip/weixin/pay/notify/url
+    notifyurl: https://maid.utools.club//weixin/pay/notify/url
 
 #位置支付交换机和队列
 mq:
