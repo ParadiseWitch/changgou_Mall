@@ -1,11 +1,16 @@
 package com.changgou.pay.controller;
 
 import com.changgou.pay.service.WeixinPayService;
+import com.github.wxpay.sdk.WXPayUtil;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +37,29 @@ public class WeixinPayController {
 	public Result queryStatus(String outtradeno){
 		Map map = weixinPayService.queryStatus(outtradeno);
 		return new Result(true, StatusCode.OK, "查询支付状态成功!", map);
+	}
+
+	@RequestMapping("/notify/url")
+	public String notifyurl(HttpServletRequest request) throws Exception {
+		//获取网络输入流
+		ServletInputStream is = request.getInputStream();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		while((len = is.read(buffer)) != -1){
+			baos.write(buffer,0,len);
+		}
+		byte[] bytes = baos.toByteArray();
+		String s = new String(bytes, "UTF-8");
+		System.out.println(s);
+
+		//xml 字符串=>map
+		Map<String, String> map = WXPayUtil.xmlToMap(s);
+		System.out.println(map);
+
+		String result = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+		return result;
 	}
 
 }
