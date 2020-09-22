@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.selectByPrimaryKey(outtradeno);
         //修改订单信息
         order.setPayTime(payDate);
-        order.setPayType("1");
+        order.setPayStatus("1");                //支付状态
         order.setTransactionId(transactionid);  //交易流水号
 
         //修改到数据库
