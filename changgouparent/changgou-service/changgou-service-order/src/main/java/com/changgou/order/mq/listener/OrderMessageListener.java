@@ -1,4 +1,4 @@
-package com.changgou.order.listener;
+package com.changgou.order.mq.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.changgou.order.service.OrderService;
@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Map;
 
 /**
- * @ClassName com.changgou.order.listener.OrderMessageListener
+ * @ClassName com.changgou.order.mq.listener.OrderMessageListener
  * @Description
  * @Author Maid
  * @Date 2020/9/22 0022 13:49

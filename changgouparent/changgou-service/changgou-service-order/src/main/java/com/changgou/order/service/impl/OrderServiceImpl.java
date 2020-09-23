@@ -10,6 +10,10 @@ import com.changgou.user.feign.UserFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import entity.IdWorker;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -48,10 +52,13 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserFeign userFeign;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     /**
      * 删除订单
-     * @param id
+     * @param outtradeno
      */
     @Override
     public void deleteOrder(String outtradeno) {
@@ -338,6 +345,18 @@ public class OrderServiceImpl implements OrderService {
         //添加用户活跃积分度  +1
         userFeign.addPoints(1);
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(("创建订单时间: " + simpleDateFormat.format(new Date())));
+
+        //添加订单
+        rabbitTemplate.convertAndSend("orderDelayQueue", (Object) order.getId(), new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                // 设置延时读取
+                message.getMessageProperties().setExpiration("10000");
+                return message;
+            }
+        });
 
     }
 
