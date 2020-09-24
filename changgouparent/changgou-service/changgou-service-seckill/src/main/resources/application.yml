@@ -12,6 +12,9 @@ spring:
         host: 192.168.56.104 #mq的服务器地址
         username: guest #账号
         password: guest #密码
+    redis:
+        host: 192.168.56.104
+        port: 6379
     main:
         allow-bean-definition-overriding: true
 eureka:
