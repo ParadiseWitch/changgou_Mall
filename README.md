@@ -110,5 +110,3 @@ yum install openresty
 # 安装成功后的目录：/usr/local/openresty
 ```
 
----
-测试
