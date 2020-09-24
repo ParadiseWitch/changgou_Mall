@@ -11,6 +11,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName com.changgou.seckill.timer.SeckillGoodsPushTask
@@ -42,14 +43,20 @@ public class SeckillGoodsPushTask {
 
 			criteria.andEqualTo("status","1");
 			criteria.andGreaterThan("stockCount",0);
-			criteria.andGreaterThan("startTime",dateMenu);
+			criteria.andGreaterThanOrEqualTo("startTime",dateMenu);
 			criteria.andLessThan("endTime",DateUtil.addDateHour(dateMenu,2));
+			//排除之前已经存入redis的数据
+			Set keys = redisTemplate.boundHashOps(timespace).keys();
+			if(keys!=null && keys.size()>0){
+				criteria.andNotIn("id",keys);
+			}
 
 			//查询数据
 			List<SeckillGoods> seckillGoods = seckillGoodsMapper.selectByExample(example);
 
 			//存入redis
 			for (SeckillGoods seckillGood : seckillGoods) {
+				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------" + timespace));
 				redisTemplate.boundHashOps(timespace).put(seckillGood.getId(),seckillGood);
 			}
 
