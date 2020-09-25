@@ -66,4 +66,11 @@ public interface SeckillGoodsService {
      * @return
      */
     List<SeckillGoods> findAll();
+
+    /**
+     * 从redis中查询符合时间区间的秒杀商品
+     * @param time
+     * @return
+     */
+	List<SeckillGoods> list(String time);
 }

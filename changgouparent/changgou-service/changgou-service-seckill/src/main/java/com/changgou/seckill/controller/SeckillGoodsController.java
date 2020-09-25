@@ -24,6 +24,17 @@ public class SeckillGoodsController {
     @Autowired
     private SeckillGoodsService seckillGoodsService;
 
+
+    /**
+     * 根据时间查询redis中秒杀商品数据
+     * @param time
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<SeckillGoods>> list(String time){
+        List<SeckillGoods> seckillGoods = seckillGoodsService.list(time);
+        return new Result<List<SeckillGoods>>(true,StatusCode.OK,"秒杀商品查询成功!",seckillGoods);
+    }
     /***
      * SeckillGoods分页条件搜索实现
      * @param seckillGoods

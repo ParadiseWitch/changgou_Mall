@@ -6,6 +6,7 @@ import com.changgou.seckill.service.SeckillGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -22,6 +23,9 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     @Autowired
     private SeckillGoodsMapper seckillGoodsMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -190,5 +194,16 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Override
     public List<SeckillGoods> findAll() {
         return seckillGoodsMapper.selectAll();
+    }
+
+    /**
+     * 从redis中查询符合时间区间的秒杀商品
+     * @param time
+     * @return
+     */
+    @Override
+    public List<SeckillGoods> list(String time) {
+        List values = redisTemplate.boundHashOps("SeckillGoods_" + time).values();
+        return values;
     }
 }
