@@ -32,7 +32,8 @@ public class SeckillGoodsPushTask {
 	public void loadGoodsPushRedis(){
 		List<Date> dateMenus = DateUtil.getDateMenus();
 		for (Date dateMenu : dateMenus) {
-			String timespace = DateUtil.data2str(dateMenu, "yyyyMMddHH");
+			//SeckillGoods_2020092511
+			String timespace = "SeckillGoods_" + DateUtil.data2str(dateMenu, "yyyyMMddHH");
 			/**
 			 * 1.审核=1
 			 * 2.库存>0
@@ -41,14 +42,14 @@ public class SeckillGoodsPushTask {
 			Example example = new Example(SeckillGoods.class);
 			Example.Criteria criteria = example.createCriteria();
 
-			criteria.andEqualTo("status","1");
-			criteria.andGreaterThan("stockCount",0);
-			criteria.andGreaterThanOrEqualTo("startTime",dateMenu);
-			criteria.andLessThan("endTime",DateUtil.addDateHour(dateMenu,2));
+			criteria.andEqualTo("status", "1");
+			criteria.andGreaterThan("stockCount", 0);
+			criteria.andGreaterThanOrEqualTo("startTime", dateMenu);
+			criteria.andLessThan("endTime", DateUtil.addDateHour(dateMenu, 2));
 			//排除之前已经存入redis的数据
 			Set keys = redisTemplate.boundHashOps(timespace).keys();
-			if(keys!=null && keys.size()>0){
-				criteria.andNotIn("id",keys);
+			if (keys != null && keys.size() > 0) {
+				criteria.andNotIn("id", keys);
 			}
 
 			//查询数据
@@ -57,8 +58,8 @@ public class SeckillGoodsPushTask {
 			System.out.println(timespace);
 			//存入redis
 			for (SeckillGoods seckillGood : seckillGoods) {
-				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------start: " + seckillGood.getStartTime() + "------end: "+seckillGood.getEndTime()));
-				redisTemplate.boundHashOps(timespace).put(seckillGood.getId(),seckillGood);
+				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------start: " + seckillGood.getStartTime() + "------end: " + seckillGood.getEndTime()));
+				redisTemplate.boundHashOps(timespace).put(seckillGood.getId(), seckillGood);
 			}
 
 		}
