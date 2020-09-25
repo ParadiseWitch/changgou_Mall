@@ -54,9 +54,10 @@ public class SeckillGoodsPushTask {
 			//查询数据
 			List<SeckillGoods> seckillGoods = seckillGoodsMapper.selectByExample(example);
 
+			System.out.println(timespace);
 			//存入redis
 			for (SeckillGoods seckillGood : seckillGoods) {
-				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------" + timespace));
+				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------start: " + seckillGood.getStartTime() + "------end: "+seckillGood.getEndTime()));
 				redisTemplate.boundHashOps(timespace).put(seckillGood.getId(),seckillGood);
 			}
 
