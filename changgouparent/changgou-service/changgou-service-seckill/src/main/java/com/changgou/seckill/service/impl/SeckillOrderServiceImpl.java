@@ -5,6 +5,7 @@ import com.changgou.seckill.dao.SeckillOrderMapper;
 import com.changgou.seckill.pojo.SeckillGoods;
 import com.changgou.seckill.pojo.SeckillOrder;
 import com.changgou.seckill.service.SeckillOrderService;
+import com.changgou.seckill.task.MultiThreadingCreateOrder;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private SeckillGoodsMapper seckillGoodsMapper;
+
+    @Autowired
+    private MultiThreadingCreateOrder multiThreadingCreateOrder;
 
     /**
      * SeckillOrder条件+分页查询
@@ -166,6 +170,10 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      */
     @Override
     public boolean add(String time, Long id, String username) {
+        //异步执行
+        multiThreadingCreateOrder.createOrder();
+
+        System.out.println("---开时执行---");
         String namespace = "SeckillGoods_" + time;
         SeckillGoods seckillGoods = (SeckillGoods) redisTemplate.boundHashOps(namespace).get(id);
         //判断有无库存
@@ -201,7 +209,7 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
             //redis的秒杀商品库存递减
             redisTemplate.boundHashOps(namespace).put(id,seckillGoods);
         }
-
+        System.out.println("---结束执行---");
         return true;
     }
 

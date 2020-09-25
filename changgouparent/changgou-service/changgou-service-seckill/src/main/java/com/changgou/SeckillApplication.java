@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import tk.mybatis.spring.annotation.MapperScan;
 
@@ -16,6 +17,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @Date 2020/9/24 0024 22:38
  * @Version v1.0
  */
+@EnableAsync
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
