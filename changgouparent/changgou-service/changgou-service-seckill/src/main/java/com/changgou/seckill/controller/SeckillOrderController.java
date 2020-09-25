@@ -4,6 +4,7 @@ import com.changgou.seckill.pojo.SeckillOrder;
 import com.changgou.seckill.service.SeckillOrderService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
+import entity.SeckillStatus;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,15 @@ public class SeckillOrderController {
 
     @Autowired
     private SeckillOrderService seckillOrderService;
+
+    @GetMapping("/query")
+    public Result<SeckillStatus> queryStatus(){
+        SeckillStatus seckillStatus = seckillOrderService.queryStatus("szitheima");
+        if(seckillStatus!=null){
+            return new Result<SeckillStatus>(true,StatusCode.OK,"抢单状态查询成功!",seckillStatus);
+        }
+        return new Result<SeckillStatus>(true,StatusCode.NOTFOUNDERROR,"查询失败!");
+    }
 
     /**
      * 添加秒杀订单

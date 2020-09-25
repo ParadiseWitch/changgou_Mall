@@ -2,6 +2,7 @@ package com.changgou.seckill.service;
 
 import com.changgou.seckill.pojo.SeckillOrder;
 import com.github.pagehelper.PageInfo;
+import entity.SeckillStatus;
 
 import java.util.List;
 
@@ -69,4 +70,11 @@ public interface SeckillOrderService {
      * @return
      */
     List<SeckillOrder> findAll();
+
+    /**
+     * 抢单状态查询
+     * @param username
+     * @return
+     */
+    SeckillStatus queryStatus(String username);
 }

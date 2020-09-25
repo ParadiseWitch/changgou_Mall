@@ -172,9 +172,21 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         SeckillStatus seckillStatus = new SeckillStatus(username, new Date(), 1, id, time);
         //存入redis队列  左存右出
         redisTemplate.boundListOps("SeckillOrderQueue").leftPush(seckillStatus);
+        //用户抢单状态
+        redisTemplate.boundHashOps("UserQueueStatus").put(username,seckillStatus);
         //异步执行
         multiThreadingCreateOrder.createOrder();
         return true;
+    }
+
+    /**
+     * 抢单状态查询
+     * @param username
+     * @return
+     */
+    @Override
+    public SeckillStatus queryStatus(String username){
+        return (SeckillStatus) redisTemplate.boundHashOps("UserQueueStatus").get(username);
     }
 
     /**

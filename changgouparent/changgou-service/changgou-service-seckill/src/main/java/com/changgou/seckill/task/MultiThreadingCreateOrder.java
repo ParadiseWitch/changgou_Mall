@@ -4,6 +4,7 @@ import com.changgou.seckill.dao.SeckillGoodsMapper;
 import com.changgou.seckill.dao.SeckillOrderMapper;
 import com.changgou.seckill.pojo.SeckillGoods;
 import com.changgou.seckill.pojo.SeckillOrder;
+import entity.IdWorker;
 import entity.SeckillStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,6 +31,8 @@ public class MultiThreadingCreateOrder {
 	@Autowired
 	private SeckillGoodsMapper seckillGoodsMapper;
 
+	@Autowired
+	private IdWorker idWorker;
 	/***
 	 * 多线程下单操作
 	 */
@@ -56,6 +59,7 @@ public class MultiThreadingCreateOrder {
 			}
 			//创建订单对象
 			SeckillOrder seckillOrder = new SeckillOrder();
+			seckillOrder.setId(idWorker.nextId());
 			seckillOrder.setSeckillId(id);                      //商品id
 			seckillOrder.setMoney(seckillGoods.getCostPrice()); //支付金额
 			seckillOrder.setUserId(username);                   //用户
@@ -83,6 +87,10 @@ public class MultiThreadingCreateOrder {
 				//redis的秒杀商品库存递减
 				redisTemplate.boundHashOps(namespace).put(id,seckillGoods);
 			}
+			seckillStatus.setOrderId(seckillOrder.getId());
+			seckillStatus.setMoney(Float.valueOf(seckillGoods.getCostPrice()));
+			seckillStatus.setStatus(2);  // 待付款
+			redisTemplate.boundHashOps("UserQueueStatus").put(username,seckillStatus);
 
 		} catch (Exception e) {
 			e.printStackTrace();
