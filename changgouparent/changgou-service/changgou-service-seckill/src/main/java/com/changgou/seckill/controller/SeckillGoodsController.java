@@ -19,7 +19,7 @@ import java.util.List;
  *****/
 
 @RestController
-@RequestMapping("/seckillGoods")
+@RequestMapping("/seckill/goods")
 @CrossOrigin
 public class SeckillGoodsController {
 
@@ -27,6 +27,17 @@ public class SeckillGoodsController {
     private SeckillGoodsService seckillGoodsService;
 
 
+    /**
+     * 在redis查询秒杀商品详情信息
+     * @param time
+     * @param id
+     * @return
+     */
+    @GetMapping("/one")
+    public Result<SeckillGoods> one(String time,Long id){
+        SeckillGoods one = seckillGoodsService.one(time, id);
+        return new Result<SeckillGoods>(true,StatusCode.OK,"查询秒杀商品详情成功!",one);
+    }
     /**
      * 获取时间菜单
      * @return

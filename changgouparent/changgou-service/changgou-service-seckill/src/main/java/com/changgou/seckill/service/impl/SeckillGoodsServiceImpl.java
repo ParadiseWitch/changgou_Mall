@@ -206,4 +206,15 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         List values = redisTemplate.boundHashOps("SeckillGoods_" + time).values();
         return values;
     }
+
+    /**
+     * 在redis中查询秒杀商品详情
+     * @param time
+     * @param id
+     * @return
+     */
+    @Override
+    public SeckillGoods one(String time, Long id) {
+        return (SeckillGoods) redisTemplate.boundHashOps("SeckillGoods_" + time).get(id);
+    }
 }

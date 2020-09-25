@@ -73,4 +73,12 @@ public interface SeckillGoodsService {
      * @return
      */
 	List<SeckillGoods> list(String time);
+
+    /**
+     * 在redis中查询秒杀商品详情
+     * @param time
+     * @param id
+     * @return
+     */
+    SeckillGoods one(String time, Long id);
 }
