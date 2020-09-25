@@ -3,11 +3,13 @@ package com.changgou.seckill.controller;
 import com.changgou.seckill.pojo.SeckillGoods;
 import com.changgou.seckill.service.SeckillGoodsService;
 import com.github.pagehelper.PageInfo;
+import entity.DateUtil;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /****
@@ -24,6 +26,16 @@ public class SeckillGoodsController {
     @Autowired
     private SeckillGoodsService seckillGoodsService;
 
+
+    /**
+     * 获取时间菜单
+     * @return
+     */
+    @GetMapping("menus")
+    public Result<List<Date>> menus(){
+        List<Date> dateMenus = DateUtil.getDateMenus();
+        return new Result<List<Date>>(true,StatusCode.OK,"获取时间菜单成功!",dateMenus);
+    }
 
     /**
      * 根据时间查询redis中秒杀商品数据
