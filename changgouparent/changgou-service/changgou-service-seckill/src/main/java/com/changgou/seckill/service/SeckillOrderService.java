@@ -48,11 +48,14 @@ public interface SeckillOrderService {
      */
     void update(SeckillOrder seckillOrder);
 
-    /***
-     * 新增SeckillOrder
-     * @param seckillOrder
+    /**
+     * 添加秒杀订单
+     * @param time
+     * @param id
+     * @param username
+     * @return
      */
-    void add(SeckillOrder seckillOrder);
+    boolean add(String time,Long id,String username);
 
     /**
      * 根据ID查询SeckillOrder

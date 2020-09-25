@@ -17,13 +17,22 @@ import java.util.List;
  *****/
 
 @RestController
-@RequestMapping("/seckillOrder")
+@RequestMapping("/seckill/order")
 @CrossOrigin
 public class SeckillOrderController {
 
     @Autowired
     private SeckillOrderService seckillOrderService;
 
+    /**
+     * 添加秒杀订单
+     * @return
+     */
+    @RequestMapping("/add")
+    public Result add(String time,Long id){
+        seckillOrderService.add(time,id,"szitheima");
+        return new Result(true,StatusCode.OK,"添加秒杀订单成功!");
+    }
     /***
      * SeckillOrder分页条件搜索实现
      * @param seckillOrder
@@ -90,17 +99,6 @@ public class SeckillOrderController {
         return new Result(true,StatusCode.OK,"修改成功");
     }
 
-    /***
-     * 新增SeckillOrder数据
-     * @param seckillOrder
-     * @return
-     */
-    @PostMapping
-    public Result add(@RequestBody   SeckillOrder seckillOrder){
-        //调用SeckillOrderService实现添加SeckillOrder
-        seckillOrderService.add(seckillOrder);
-        return new Result(true,StatusCode.OK,"添加成功");
-    }
 
     /***
      * 根据ID查询SeckillOrder数据
