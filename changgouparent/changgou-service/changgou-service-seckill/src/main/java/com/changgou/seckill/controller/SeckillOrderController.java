@@ -26,8 +26,8 @@ public class SeckillOrderController {
     private SeckillOrderService seckillOrderService;
 
     @GetMapping("/query")
-    public Result<SeckillStatus> queryStatus(){
-        SeckillStatus seckillStatus = seckillOrderService.queryStatus("szitheima");
+    public Result<SeckillStatus> queryStatus(String username){
+        SeckillStatus seckillStatus = seckillOrderService.queryStatus(username);
         if(seckillStatus!=null){
             return new Result<SeckillStatus>(true,StatusCode.OK,"抢单状态查询成功!",seckillStatus);
         }
@@ -39,8 +39,8 @@ public class SeckillOrderController {
      * @return
      */
     @RequestMapping("/add")
-    public Result add(String time,Long id){
-        seckillOrderService.add(time,id,"szitheima");
+    public Result add(String time,Long id,String username){
+        seckillOrderService.add(time,id,username);
         return new Result(true,StatusCode.OK,"添加秒杀订单成功!");
     }
     /***

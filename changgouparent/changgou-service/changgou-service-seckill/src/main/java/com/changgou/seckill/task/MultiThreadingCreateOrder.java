@@ -51,6 +51,14 @@ public class MultiThreadingCreateOrder {
 			Long id = seckillStatus.getGoodsId();
 			String username = seckillStatus.getUsername();
 
+			//先到SeckillGoodsCountList——ID队列获取商品的一个信息, 如果能获取, 则可以下单
+			Object sgoods = redisTemplate.boundListOps("SeckillGoodsCountList_" + seckillStatus.getGoodsId()).rightPop();
+			//如果不能获取队形信息, 则库存为空
+			if (sgoods == null) {
+				clearUserQueue(username);
+				return;
+			}
+
 			String namespace = "SeckillGoods_" + time;
 			SeckillGoods seckillGoods = (SeckillGoods) redisTemplate.boundHashOps(namespace).get(id);
 			//判断有无库存
@@ -95,5 +103,16 @@ public class MultiThreadingCreateOrder {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 清理用户排队信息
+	 * @param username
+	 */
+	public void clearUserQueue(String username){
+		//排队表示(请求下单次数标识)
+		redisTemplate.boundHashOps("UserQueueCount").delete(username);
+		//排队状态信息
+		redisTemplate.boundHashOps("UserQueueStatus").delete(username);
 	}
 }

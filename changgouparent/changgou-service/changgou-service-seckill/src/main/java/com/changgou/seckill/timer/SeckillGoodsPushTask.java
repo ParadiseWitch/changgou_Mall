@@ -59,9 +59,27 @@ public class SeckillGoodsPushTask {
 			//存入redis
 			for (SeckillGoods seckillGood : seckillGoods) {
 				System.out.println(("商品ID: " + seckillGood.getId() + "---------存入到了redis---------start: " + seckillGood.getStartTime() + "------end: " + seckillGood.getEndTime()));
+				//存入redis
 				redisTemplate.boundHashOps(timespace).put(seckillGood.getId(), seckillGood);
+				//给每个商品做个队列
+				redisTemplate.boundListOps("SeckillGoodsCountList_" + seckillGood.getId()).leftPushAll(putAllIds(seckillGood.getStockCount(),seckillGood.getId()));
+
 			}
 
 		}
+	}
+
+	/**
+	 * 获取每个商品ID集合
+	 * @param num
+	 * @param id
+	 * @return
+	 */
+	public Long[] putAllIds(Integer num,Long id){
+		Long[] ids = new Long[num];
+		for (int i = 0; i < ids.length; i++) {
+			ids[i] = id;
+		}
+		return ids;
 	}
 }
