@@ -86,7 +86,11 @@ public class MultiThreadingCreateOrder {
 			 * 库存递减
 			 */
 			seckillGoods.setStockCount(seckillGoods.getStockCount()-1);
-			if(seckillGoods.getStockCount() <= 0){
+			Thread.sleep(10000);
+			System.out.println(Thread.currentThread().getId() + "操作后剩余库存=" + seckillGoods.getStockCount());
+			// 解决数据库可能不精准的问题
+			Long size = redisTemplate.boundListOps("SeckillGoodsCountList_" + seckillGoods.getGoodsId()).size();
+			if(size <= 0){
 				//同步数据到mysql
 				seckillGoodsMapper.updateByPrimaryKeySelective(seckillGoods);
 				//直接删除redis中的秒杀商品
