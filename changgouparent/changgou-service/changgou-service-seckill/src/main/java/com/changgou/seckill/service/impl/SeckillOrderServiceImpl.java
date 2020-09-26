@@ -168,6 +168,16 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      */
     @Override
     public boolean add(String time, Long id, String username) {
+        //一个用户最多只能有一个排队信息存在(即只能有一个未支付订单)
+        //记录用户排队的次数
+        //1. key
+        //2. 自增的值
+        Long userQueueCount = redisTemplate.boundHashOps("UserQueueCount").increment(username, 1);
+        if(userQueueCount > 1){
+            //100表示重复排队
+            throw new RuntimeException("100");
+        }
+
         //创建排队对象
         SeckillStatus seckillStatus = new SeckillStatus(username, new Date(), 1, id, time);
         //存入redis队列  左存右出
