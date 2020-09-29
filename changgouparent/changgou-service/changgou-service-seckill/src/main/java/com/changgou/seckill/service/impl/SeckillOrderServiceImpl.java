@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +36,69 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private MultiThreadingCreateOrder multiThreadingCreateOrder;
+
+    @Autowired
+    private SeckillGoodsMapper seckillGoodsMapper;
+
+    /**
+     * 删除订单
+     * @param username
+     */
+    @Override
+    public void deleteOrder(String username) {
+        //查询顶单
+        redisTemplate.boundHashOps("SeckillOrder").get("username");
+        //查询用户排队信息 SeckillStatus
+        SeckillStatus seckillStatus = (SeckillStatus) redisTemplate.boundHashOps("UserQueueStatus").get("username");
+        //删除排队信息
+        clearUserQueue(username);
+        //回滚库存
+        String namespace = "SeckillGoods_" + seckillStatus.getTime();
+        SeckillGoods seckillGoods = (SeckillGoods) redisTemplate.boundHashOps(namespace).get(seckillStatus.getGoodsId());
+
+        if (seckillGoods == null) {
+            seckillGoods = seckillGoodsMapper.selectByPrimaryKey(seckillStatus.getGoodsId());
+            //更新数据库中得库存
+            seckillGoods.setStockCount(1);
+            seckillGoodsMapper.updateByPrimaryKeySelective(seckillGoods);
+        }else{
+            seckillGoods.setStockCount(seckillGoods.getStockCount() + 1);
+        }
+        redisTemplate.boundHashOps(namespace).put(seckillGoods.getId(),seckillGoods);
+        //队列
+        redisTemplate.boundHashOps("SeckillGoodsCountList_").put(seckillGoods.getId(),seckillGoods);
+    }
+
+    /**
+     * 秒杀订单修改状态
+     * @param username
+     * @param transactionid
+     * @param endtime
+     */
+    @Override
+    public void updataPayStatus(String username, String transactionid, String endtime) {
+        //查询
+        SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.boundHashOps("SeckillOrder").get(username);
+        if (seckillOrder != null) {
+            Date payTimeInfo = null;
+            try {
+                //修改
+                seckillOrder.setStatus("1");
+                seckillOrder.setTransactionId(transactionid);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+                payTimeInfo = simpleDateFormat.parse(endtime);
+                seckillOrder.setPayTime(payTimeInfo);
+                //同步mysql
+                seckillOrderMapper.insertSelective(seckillOrder);
+                //删除redis相应数据
+                redisTemplate.boundHashOps("SeckillOrder").delete(username);
+                //删除用户排队信息
+                clearUserQueue(username);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * SeckillOrder条件+分页查询
@@ -216,5 +281,16 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     @Override
     public List<SeckillOrder> findAll() {
         return seckillOrderMapper.selectAll();
+    }
+
+    /**
+     * 清理用户排队信息
+     * @param username
+     */
+    public void clearUserQueue(String username){
+        //排队表示(请求下单次数标识)
+        redisTemplate.boundHashOps("UserQueueCount").delete(username);
+        //排队状态信息
+        redisTemplate.boundHashOps("UserQueueStatus").delete(username);
     }
 }
