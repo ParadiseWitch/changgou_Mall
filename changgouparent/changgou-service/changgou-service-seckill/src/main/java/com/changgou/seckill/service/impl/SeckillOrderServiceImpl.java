@@ -47,9 +47,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     @Override
     public void deleteOrder(String username) {
         //查询顶单
-        redisTemplate.boundHashOps("SeckillOrder").get("username");
+        redisTemplate.boundHashOps("SeckillOrder").get(username);
         //查询用户排队信息 SeckillStatus
-        SeckillStatus seckillStatus = (SeckillStatus) redisTemplate.boundHashOps("UserQueueStatus").get("username");
+        SeckillStatus seckillStatus = (SeckillStatus) redisTemplate.boundHashOps("UserQueueStatus").get(username);
         //删除排队信息
         clearUserQueue(username);
         //回滚库存
