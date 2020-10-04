@@ -5,9 +5,9 @@ spring:
     name: business
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.211.132:3306/fescar-business?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.56.104:3306/fescar-business?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: 123456
+    password: root
   main:
     allow-bean-definition-overriding: true
 eureka:
