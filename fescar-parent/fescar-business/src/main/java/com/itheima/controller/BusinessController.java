@@ -21,8 +21,11 @@ public class BusinessController {
      * @return
      */
     @RequestMapping(value = "/addorder")
-    public String order(String username,int id,int count){
+    public String order(){
         //下单
+        String username = "zhangsan";
+        int id = 1;
+        int count = 5;
         businessService.add(username,id,count);
         return "success";
     }
