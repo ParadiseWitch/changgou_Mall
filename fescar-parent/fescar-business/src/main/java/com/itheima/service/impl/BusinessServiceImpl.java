@@ -1,12 +1,12 @@
 package com.itheima.service.impl;
 
-import com.alibaba.fescar.spring.annotation.GlobalTransactional;
 import com.itheima.dao.LogInfoMapper;
 import com.itheima.feign.OrderInfoFeign;
 import com.itheima.feign.UserInfoFeign;
 import com.itheima.pojo.LogInfo;
 import com.itheima.service.BusinessService;
 import com.netflix.discovery.converters.Auto;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class BusinessServiceImpl implements BusinessService {
      * @param id
      * @param count
      */
-    @GlobalTransactional(name = "add")
+    @GlobalTransactional
     @Override
     public void add(String username, int id, int count) {
         //添加订单日志
